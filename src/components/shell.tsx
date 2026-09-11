@@ -17,7 +17,7 @@ import {
   Users,
   House,
   Swords,
-  Compass,
+  Radio,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,6 +39,7 @@ import { useSession } from "@/lib/client/session";
 import { api, post } from "@/lib/client/api";
 const nav = [
   ["/home", "Home"],
+  ["/calls", "Calls"],
   ["/arena", "Arena"],
   ["/explore", "Hives"],
   ["/rankings", "Rankings"],
@@ -256,8 +257,8 @@ function MobileNavigation() {
   if (!v) return null;
   const links = [
     { href: "/home", label: "Home", Icon: House },
+    { href: "/calls", label: "Calls", Icon: Radio },
     { href: "/arena", label: "Arena", Icon: Swords },
-    { href: "/explore", label: "Hives", Icon: Compass },
     { href: `/humans/${v.handle}`, label: "Profil", Icon: User },
   ];
   return (

@@ -29,11 +29,11 @@ Untuk menjalankan hasil build:
 1. Jelajahi Landing dan Hive tanpa akun.
 2. Pilih **Gabung HIVE → Coba alur masuk (demo)**.
 3. Pilih PFP, isi nama, bergabung ke **Aster**, dan konfirmasi **Purple**.
-4. Di Arena Lobby, pilih **Tandai siap**, lalu **Masuk Arena**.
-5. Pilih A/B, diskusikan saat Deliberate, dan kunci call saat Commit.
-6. Baca Reveal dan Council, lalu pilih Stay atau Switch saat Revision.
-7. Selesaikan tiga ronde. Gunakan **Majukan fase demo** dan **Majukan ke outcome demo** untuk mempercepat eksplorasi.
-8. Buka hasil, baca replay, dan salin tautan replay publik.
+4. Dari Home, buka **Steam Momentum · Quick Pulse**. Buat prediksi, baca belief komunitas, diskusikan bersama Squad, revisi keputusan, lalu Resolve dan bagikan hasil publik.
+5. Di Arena Lobby, pilih **Tandai siap**, lalu **Masuk Arena**.
+6. Pilih A/B, diskusikan saat Deliberate, dan kunci call saat Commit.
+7. Baca Reveal dan Council, lalu pilih Stay atau Switch saat Revision.
+8. Selesaikan tiga ronde. Gunakan kontrol demo untuk mempercepat eksplorasi, lalu buka hasil dan replay publik.
 
 Waktu fase tetap berjalan saat berpindah halaman. Call yang terlambat dapat gagal atau menyebabkan forfeit. Receipt yang baru diterima belum dianggap terkunci.
 
@@ -46,6 +46,7 @@ Waktu fase tetap berjalan saat berpindah halaman. Call yang terlambat dapat gaga
 | Public | Landing, Explore dengan pencarian/filter, profil Hive/Squad/Human, rankings contoh, replay, Watch berupa historical replay, View Proof |
 | Bergabung | Sesi demo, empat langkah onboarding, join/create/defer Squad, undangan valid/full/expired |
 | Sosial | Home kontekstual, identitas PFP–crest–sigil, follow Hive, aktivitas ilustratif, notifikasi yang bisa ditandai dibaca |
+| Open Calls | Steam Quick Pulse anytime, choice-before-crowd disclosure, diskusi Squad, Stay/Switch, resolver demo, void aman, skor, Wisdom Lift, dan hasil publik |
 | Arena | Lobby, readiness, roster lock, tujuh fase, Living Belief Field, pilihan privat, receipt, chat Squad, argumen representative, Council, Stay/Switch, hasil tiga ronde |
 | Hasil | Skor canonical, Wisdom Lift terpisah dari perubahan skor, pending/void/forfeit/no-contest, replay dan share preview |
 | Kontrol | Light/dark/system, reduced motion, profil, preferensi presence/reminder, detail integrasi, operator draft event dan moderasi demo |
@@ -89,9 +90,9 @@ npm run format:check
 npm run build
 ```
 
-35 pengujian domain/gateway/visual-state meliputi presisi integer, skor tiga ronde, batas disclosure pada Living Belief Field, receipt lifecycle, call terlambat, idempotency, attribution, forfeit/defaulted Stay, role/phase checks, urutan onboarding, origin/session, roster lock, dan public replay projection.
+39 pengujian domain/gateway/visual-state meliputi presisi integer, skor tiga ronde, batas disclosure pada Living Belief Field dan Quick Pulse, lifecycle receipt/Open Call, call terlambat, idempotency, attribution, forfeit/defaulted Stay, void aman, role/phase checks, urutan onboarding, origin/session, roster lock, serta public replay/result projection.
 
-Alur browser yang diperiksa: onboarding hingga Home; tiga ronde lengkap termasuk chat, Commit dan Revision; hasil **257,00 vs 216,00**; Wisdom Lift ronde pertama **+15 pp**; public replay tanpa cookie; pencarian kosong; komunitas baru tanpa Arena; dark mode; layout mobile 390 px dan 320 px. Refresh Landing dan Home dengan sesi aktif diperiksa ulang tanpa hydration error.
+Alur browser yang diperiksa: onboarding hingga Home; Quick Pulse dari prediksi awal sampai outcome, hasil publik tanpa data personal, dan filter kosong; tiga ronde lengkap termasuk chat, Commit dan Revision; hasil **257,00 vs 216,00**; Wisdom Lift ronde pertama **+15 pp**; public replay tanpa cookie; pencarian kosong; komunitas baru tanpa Arena; dark mode; layout mobile 390 px dan 320 px. Refresh Landing dan Home dengan sesi aktif diperiksa ulang tanpa hydration error.
 
 ## Keputusan implementasi
 

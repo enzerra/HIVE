@@ -30,6 +30,8 @@ import { useSession } from "@/lib/client/session";
 import { api, post } from "@/lib/client/api";
 import { hives, squads, hiveById, squadById } from "@/domain/community";
 import type { Hive } from "@/domain/types";
+import type { OpenCall } from "@/domain/types";
+import { CallCard } from "@/features/calls";
 
 function Activity() {
   return (
@@ -179,6 +181,12 @@ export function HomePage() {
     enabled: !!v,
     staleTime: 0,
   });
+  const calls = useQuery({
+    queryKey: ["calls"],
+    queryFn: () => api<OpenCall[]>("calls"),
+    enabled: !!v?.onboarded,
+    staleTime: 0,
+  });
   return (
     <AuthGate>
       <PageTitle
@@ -195,6 +203,20 @@ export function HomePage() {
       />
       <div className="social-layout">
         <div className="social-main">
+          {v?.onboarded && calls.data?.[0] && (
+            <section className="mb-8">
+              <div className="section-title">
+                <div>
+                  <p className="eyebrow">OPEN CALL · ANYTIME</p>
+                  <h2>Prediksi yang sedang hidup.</h2>
+                </div>
+                <Link className="text-link subtle" href="/calls">
+                  Lihat semua <ArrowRight size={13} />
+                </Link>
+              </div>
+              <CallCard call={calls.data[0]} />
+            </section>
+          )}
           {v?.squadId && (
             <Link
               className="mobile-squad-summary"

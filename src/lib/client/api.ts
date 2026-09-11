@@ -30,6 +30,8 @@ const messages: Record<string, string> = {
   ACTION_FORBIDDEN: "Aksi ini tidak tersedia untuk peranmu.",
   REPLAY_PENDING:
     "Hasil belum tersedia. Replay akan siap setelah outcome selesai.",
+  CALL_ALREADY_LOCKED: "Prediksi awalmu sudah dikunci.",
+  CALL_PHASE_CLOSED: "Tahap Open Call ini sudah berakhir.",
 };
 export async function api<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`/api/v1/${path.replace(/^\//, "")}`, {

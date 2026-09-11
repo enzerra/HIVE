@@ -18,6 +18,16 @@ import {
 import { hives, squadById } from "@/domain/community";
 import type { Scenario } from "@/domain/types";
 import { publishReplay, publicReplay } from "@/lib/server/replays";
+import {
+  advanceQuickCall,
+  discussQuickCall,
+  listQuickCalls,
+  lockQuickCall,
+  publicQuickCall,
+  quickCall,
+  reviseQuickCall,
+  voidQuickCall,
+} from "@/lib/server/quick-calls";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 const cookieName = "hive_demo_session";
@@ -68,6 +78,8 @@ async function handle(req: NextRequest, context: Context) {
         return success(publishReplay(needWorld(id)));
       if (path.startsWith("replays/"))
         return success(publicReplay(path.split("/")[1]));
+      if (path === "calls/steam-rivals-001/public")
+        return success(publicQuickCall());
       if (path.startsWith("proof/"))
         return success({
           mode: "demo",
@@ -120,6 +132,9 @@ async function handle(req: NextRequest, context: Context) {
       }
       if (path === "notifications") return success(w.notifications);
       if (path === "preferences") return success(w.viewer.preferences);
+      if (path === "calls") return success(listQuickCalls(w.viewer.id));
+      if (path === "calls/steam-rivals-001")
+        return success(quickCall(w.viewer.id));
       if (path.startsWith("operator/")) {
         if (w.viewer.role !== "operator")
           throw new AppError("ACTION_FORBIDDEN", 403);
@@ -233,6 +248,31 @@ async function handle(req: NextRequest, context: Context) {
       w.ready = z.boolean().parse(body.ready);
       return success(snapshot(w));
     }
+    if (path === "calls/steam-rivals-001/lock")
+      return success(
+        lockQuickCall(
+          w.viewer.id,
+          z.enum(["A", "B"]).parse(body.choice),
+          str(body.reason, 240),
+        ),
+      );
+    if (path === "calls/steam-rivals-001/revise")
+      return success(
+        reviseQuickCall(w.viewer.id, z.enum(["A", "B"]).parse(body.choice)),
+      );
+    if (path === "calls/steam-rivals-001/discussion")
+      return success(
+        discussQuickCall(
+          w.viewer.id,
+          w.viewer.handle,
+          w.viewer.avatar,
+          str(body.text, 240),
+        ),
+      );
+    if (path === "calls/steam-rivals-001/advance")
+      return success(advanceQuickCall(w.viewer.id));
+    if (path === "calls/steam-rivals-001/void")
+      return success(voidQuickCall(w.viewer.id));
     if (path === "matches/current/start") return success(start(w));
     if (path === "matches/current/advance") return success(advance(w));
     if (path === "matches/current/reset")

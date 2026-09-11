@@ -136,3 +136,35 @@ export type Notification = {
   href: string;
   read: boolean;
 };
+
+export type OpenCallStage =
+  "open" | "discussing" | "resolving" | "resolved" | "void";
+export type OpenCall = {
+  id: string;
+  kind: "quick";
+  stage: OpenCallStage;
+  title: string;
+  question: string;
+  optionA: string;
+  optionB: string;
+  source: string;
+  metric: string;
+  window: string;
+  participants: number;
+  squads: number;
+  initialChoice: Choice | null;
+  finalChoice: Choice | null;
+  initialLocked: boolean;
+  finalLocked: boolean;
+  reason: string;
+  belief: { a: number; b: number } | null;
+  discussion: { id: string; author: string; text: string; avatar: number }[];
+  outcome: Choice | null;
+  score: number | null;
+  wisdomLift: number | null;
+  evidence: {
+    capturedAt: string;
+    a: { start: number; end: number; growth: string };
+    b: { start: number; end: number; growth: string };
+  } | null;
+};

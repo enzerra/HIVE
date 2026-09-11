@@ -25,6 +25,11 @@ import {
   ProofPage,
   OperatorPage,
 } from "@/features/settings";
+import {
+  CallsPage,
+  QuickCallPage,
+  QuickCallResultPage,
+} from "@/features/calls";
 type Props = { params: Promise<{ path: string[] }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { path } = await params;
@@ -32,6 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     home: "Home",
     explore: "Temukan Hive",
     arena: "Arena",
+    calls: "Open Calls",
     hives: "Komunitas",
     squads: "Squad",
     humans: "Human",
@@ -119,6 +125,18 @@ export default async function Page({ params }: Props) {
           <LobbyPage />
         ) : null;
       if (!screen) notFound();
+      break;
+    case "calls":
+      if (p.length === 1) screen = <CallsPage />;
+      else if (p.length === 2 && p[1] === "steam-rivals-001")
+        screen = <QuickCallPage id={p[1]} />;
+      else if (
+        p.length === 3 &&
+        p[1] === "steam-rivals-001" &&
+        p[2] === "result"
+      )
+        screen = <QuickCallResultPage id={p[1]} />;
+      else notFound();
       break;
     case "replays":
     case "watch":
