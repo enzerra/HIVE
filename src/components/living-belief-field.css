@@ -1,0 +1,424 @@
+.belief-field {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  margin: 22px 0 32px;
+  padding: 22px 28px 15px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--card);
+}
+.belief-field::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(
+    ellipse at 50% 40%,
+    color-mix(in srgb, var(--primary) 10%, transparent),
+    transparent 65%
+  );
+}
+.field-merge {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.field-merge span {
+  position: absolute;
+  width: 36px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 11px;
+  animation: field-merge 1.2s ease-in-out both;
+}
+@keyframes field-merge {
+  0%,
+  15% {
+    transform: translate(var(--merge-x), var(--merge-y));
+    opacity: 0.8;
+  }
+  85%,
+  100% {
+    transform: translate(0, 0) scale(0.4);
+    opacity: 0;
+  }
+}
+.belief-field[data-hidden="true"] * {
+  animation-play-state: paused !important;
+}
+.belief-field[data-reduced="true"] .field-merge,
+html[data-reduced-motion="true"] .field-merge {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .field-merge {
+    display: none;
+  }
+}
+.field-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted-foreground);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+.field-header .eyebrow {
+  margin: 0;
+  font-size: 10px;
+}
+.field-question {
+  text-align: center;
+  max-width: 620px;
+  margin: 18px auto 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--foreground);
+}
+.field-stage {
+  height: 245px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8%;
+}
+.field-wires {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  stroke: var(--primary);
+  fill: none;
+  stroke-width: 1;
+  opacity: 0.2;
+}
+.field-wires circle {
+  stroke-dasharray: 2 9;
+}
+.field-wire-direct {
+  stroke-dasharray: 5 10;
+}
+.field-pole {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 6px;
+  width: 185px;
+}
+.field-sigil {
+  padding: 9px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: var(--card);
+  transform: translate(var(--field-x, 0px), var(--field-y, 0px));
+  transition: transform 0.5s ease-out;
+}
+.field-pole strong {
+  font-size: 20px;
+  letter-spacing: -0.04em;
+}
+.field-pole-caption,
+.field-pole small {
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+.field-meter {
+  height: 4px;
+  width: 110px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.field-meter i {
+  display: block;
+  height: 100%;
+  background: var(--primary);
+  transition: width 0.8s ease-in-out;
+}
+.field-core-area {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: 125px;
+  height: 125px;
+  display: grid;
+  place-items: center;
+}
+.field-core-orbit {
+  position: absolute;
+  inset: 0;
+  border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  border-radius: 50%;
+  border-top-color: var(--primary);
+  animation: field-orbit 16s linear infinite;
+}
+.field-core {
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  background: var(--card);
+  color: var(--primary);
+  border-radius: 24px;
+  box-shadow: 0 0 50px color-mix(in srgb, var(--primary) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 40%, var(--border));
+  animation: field-core-enter 0.6s ease-out both;
+}
+.field-belief-marker {
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  transition: transform 0.9s ease-in-out;
+}
+.field-belief-marker::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 15px color-mix(in srgb, var(--primary) 30%, transparent);
+}
+.field-marker-1::before {
+  background: var(--foreground);
+}
+.field-council:has(button[aria-pressed="true"]) .field-wire-direct {
+  stroke-width: 2;
+  opacity: 0.9;
+}
+.field-reveal .field-meter {
+  animation: field-core-enter 0.7s ease-out both;
+}
+.field-core-label {
+  position: absolute;
+  top: calc(100% + 9px);
+  white-space: nowrap;
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  color: var(--muted-foreground);
+}
+.field-status {
+  font-size: 13px;
+  text-align: center;
+  margin: 5px 0 12px;
+}
+.field-choices {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+.field-choices b {
+  margin-right: 5px;
+  color: var(--foreground);
+}
+.field-squads,
+.field-own-squad {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.field-squads button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 11px;
+  cursor: pointer;
+  background: var(--background);
+}
+.field-squads button[aria-pressed="true"] {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 8%, var(--card));
+}
+.field-squads button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.field-squads button:focus-visible,
+.argument-highlight {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+.field-own-squad {
+  font-size: 11px;
+  align-items: center;
+  color: var(--muted-foreground);
+}
+.field-pulse .field-wire-direct {
+  opacity: 1;
+  stroke-width: 3;
+  animation: field-message 0.9s ease-out both;
+}
+.belief-field footer {
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 10px;
+  text-align: center;
+  color: var(--muted-foreground);
+}
+.field-snapshots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+}
+.field-snapshots > div {
+  display: grid;
+  text-align: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  padding: 12px;
+  border-radius: 12px;
+  animation: field-snapshot 0.8s ease-out both;
+  animation-delay: calc(var(--snapshot-order) * 120ms);
+}
+.field-snapshots span {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--muted-foreground);
+}
+.field-snapshots strong {
+  font-size: 14px;
+}
+.field-snapshots small {
+  font-size: 9px;
+  color: var(--muted-foreground);
+}
+body:has(.belief-field) .community-atmosphere {
+  opacity: 0.25;
+}
+.belief-field[data-paused="true"] .field-core-orbit {
+  animation-play-state: paused;
+}
+.belief-field[data-reduced="true"] *,
+html[data-reduced-motion="true"] .belief-field * {
+  animation: none !important;
+  transition: none !important;
+}
+@keyframes field-orbit {
+  to {
+    rotate: 360deg;
+  }
+}
+@keyframes field-core-enter {
+  from {
+    opacity: 0.4;
+    scale: 0.85;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+@keyframes field-message {
+  from {
+    stroke-dashoffset: 120;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes field-snapshot {
+  from {
+    opacity: 0;
+    transform: translateY(-15px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (max-width: 650px) {
+  .belief-field {
+    padding: 16px 12px 12px;
+    border-radius: 16px;
+  }
+  .field-header {
+    font-size: 8px;
+  }
+  .field-header .eyebrow {
+    font-size: 8px;
+  }
+  .field-stage {
+    height: 210px;
+    padding: 0;
+  }
+  .field-pole {
+    width: 100px;
+  }
+  .field-pole strong {
+    font-size: 17px;
+  }
+  .field-sigil .sigil {
+    width: 48px !important;
+    height: 48px !important;
+  }
+  .field-core-area {
+    width: 78px;
+    height: 78px;
+  }
+  .field-core {
+    width: 49px;
+    height: 49px;
+    border-radius: 16px;
+  }
+  .field-core svg {
+    width: 25px;
+    height: 25px;
+  }
+  .field-core-label {
+    font-size: 6px;
+  }
+  .field-pole-caption,
+  .field-pole small {
+    font-size: 9px;
+  }
+  .field-meter {
+    width: 70px;
+  }
+  .field-choices {
+    gap: 14px;
+    font-size: 10px;
+  }
+  .field-squads {
+    gap: 6px;
+  }
+  .field-squads button {
+    padding: 5px 7px;
+  }
+  .field-snapshots {
+    gap: 6px;
+  }
+  .field-snapshots > div {
+    padding: 9px 4px;
+  }
+  .field-snapshots strong {
+    font-size: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .belief-field * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
