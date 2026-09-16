@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import { RoundTransition } from "@/components/round-transition";
-import { LivingBeliefField } from "@/components/living-belief-field";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -33,7 +32,6 @@ import {
   MatchPair,
   PageTitle,
   ProofLink,
-  ReportDialog,
   ShareDialog,
 } from "@/components/shared";
 import { api, post } from "@/lib/client/api";
@@ -54,6 +52,7 @@ import {
   type Card,
 } from "@/domain/types";
 import { squads } from "@/domain/community";
+import "./arena-game.css";
 type Replay = {
   id: string;
   results: Result[];
@@ -371,12 +370,7 @@ function ReceiptStatus({ receipt: r }: { receipt: PublicReceipt | null }) {
       ) : (
         <LoaderCircle size={16} className="animate-spin" />
       )}
-      <div>
-        {labels[r.state]}
-        <p className="text-[10px] opacity-80">
-          Receipt simulasi · {r.id.slice(0, 8)}
-        </p>
-      </div>
+      <div>{labels[r.state]}</div>
     </div>
   );
 }
@@ -437,12 +431,21 @@ function SquadChat({ s }: { s: MatchView }) {
     }
   }
   return (
-    <aside className="match-sidebar">
-      <div className="section-title">
-        <h3>Squad Aster</h3>
-        <Crest size={27} />
-      </div>
-      <p className="aside-copy">Ruang privat untuk empat perspektif.</p>
+    <section className="game-squad-chat">
+      <header>
+        <div>
+          <Crest size={30} />
+          <div>
+            <strong>Squad Aster</strong>
+            <span>4 Human · ruang privat</span>
+          </div>
+        </div>
+        <div className="game-squad-presence" aria-label="Empat anggota aktif">
+          {[0, 1, 2, 3].map((avatar) => (
+            <Avatar key={avatar} index={avatar} size={25} />
+          ))}
+        </div>
+      </header>
       <div className="chat-messages">
         {s.chat.map((m) => (
           <div key={m.id} className="chat-line">
@@ -474,17 +477,10 @@ function SquadChat({ s }: { s: MatchView }) {
       ) : (
         <p className="chat-locked">
           <LockKeyhole className="inline mr-1.5" size={12} />
-          Percakapan terbuka pada Deliberate dan Council.
+          Diskusi ditutup untuk fase ini.
         </p>
       )}
-      <div className="mt-7 pt-6 border-t">
-        <h3>Satu alasan yang jelas.</h3>
-        <p className="aside-copy">
-          Berikan bukti. Ajukan pertanyaan. Sisakan ruang untuk pandangan yang
-          belum kamu pertimbangkan.
-        </p>
-      </div>
-    </aside>
+    </section>
   );
 }
 function ArgumentEditor({ s }: { s: MatchView }) {
@@ -493,12 +489,8 @@ function ArgumentEditor({ s }: { s: MatchView }) {
     qc = useQueryClient(),
     stats = argumentStats(text);
   return (
-    <div className="match-action">
-      <h2>Argumen resmi Aster</h2>
-      <p>
-        Representative merangkum alasan Squad. Maksimal 30 kata dan 240
-        karakter.
-      </p>
+    <div className="game-argument-editor">
+      <h3>Ringkasan Squad</h3>
       {s.canEditArgument ? (
         <>
           <Textarea
@@ -536,10 +528,6 @@ function ArgumentEditor({ s }: { s: MatchView }) {
       ) : (
         <p className="mt-4 text-foreground!">“{s.argument}”</p>
       )}
-      <p className="form-note">
-        Argumen dibekukan saat Commit dimulai. Peran demo dapat diubah melalui
-        Pengaturan → Advanced.
-      </p>
     </div>
   );
 }
@@ -576,27 +564,83 @@ export function PlayPage() {
     </AuthGate>
   );
 }
+function GameChoices({
+  selected,
+  disabled,
+  onSelect,
+}: {
+  selected: Choice | null;
+  disabled: boolean;
+  onSelect: (choice: Choice) => void;
+}) {
+  return (
+    <div className="game-choices">
+      {(["A", "B"] as Choice[]).map((choice, index) => (
+        <div className="contents" key={choice}>
+          {index === 1 && <span className="game-versus">VS</span>}
+          <button
+            disabled={disabled}
+            aria-pressed={selected === choice}
+            onClick={() => onSelect(choice)}
+          >
+            <span>{choice}</span>
+            <strong>{choice === "A" ? "Counter-Strike 2" : "Dota 2"}</strong>
+            {selected === choice && <Check size={18} />}
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function RevealBoard({ s }: { s: MatchView }) {
+  const purple = s.initial?.purple ?? null;
+  return (
+    <div className="game-reveal">
+      <div className="game-reveal-squads">
+        {s.revealChoices.map((item) => (
+          <div key={item.squad}>
+            <Crest symbol={item.symbol} size={30} />
+            <strong>{item.squad}</strong>
+            <span>{item.choice ?? "—"}</span>
+          </div>
+        ))}
+      </div>
+      <div className="game-belief" aria-label="Initial belief Hive Purple">
+        <span>HIVE PURPLE</span>
+        <strong>{percent(purple)} A</strong>
+        <div>
+          <i style={{ width: purple === null ? "0%" : `${purple / 10000}%` }} />
+        </div>
+        <small>{percent(purple === null ? null : 1_000_000 - purple)} B</small>
+      </div>
+    </div>
+  );
+}
+
 function MatchRoom({ s, stale }: { s: MatchView; stale: boolean }) {
-  const { data: viewer } = useSession();
+  const qc = useQueryClient();
   const [activeCard, setActiveCard] = useState<string | null>(null);
-  const ownSquad = squads.find((squad) => squad.id === viewer?.squadId) ?? null;
-  const qc = useQueryClient(),
-    [draft, setDraft] = useState<Choice | null>(s.own.initialChoice),
-    [revision, setRevision] = useState<"stay" | "switch">("stay"),
-    [attribution, setAttribution] = useState(""),
-    [busy, setBusy] = useState(false),
-    [error, setError] = useState(""),
-    requestKey = useRef<string | null>(null),
-    lastPayload = useRef("");
-  const titles: Record<string, string> = {
-    think: "Sebelum mendengar yang lain, pikirkan sendiri.",
-    deliberate: "Empat orang. Lebih dari satu cara melihat.",
-    commit: "Sudah punya keyakinan? Kunci pilihanmu.",
-    reveal: "Ternyata, kita melihatnya berbeda.",
-    council: "Dengarkan alasan di balik angkanya.",
-    revision: "Tetap yakin, atau melihat sesuatu yang baru?",
-    resolve: "Pilihan ditutup. Ceritanya belum selesai.",
-  };
+  const [draft, setDraft] = useState<Choice | null>(s.own.initialChoice);
+  const [revision, setRevision] = useState<"stay" | "switch">("stay");
+  const [attribution, setAttribution] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const requestKey = useRef<string | null>(null);
+  const lastPayload = useRef("");
+  const phaseCopy = {
+    think: ["Make your call.", "Pilih dengan pikiranmu sendiri."],
+    deliberate: [
+      "Talk it through.",
+      "Dengarkan Squad, lalu pertajam pilihanmu.",
+    ],
+    commit: ["Lock the decision.", "Pilihan lain tetap tersembunyi."],
+    reveal: ["The room has spoken.", "Lihat pilihan setiap Squad."],
+    council: ["Listen to the reasons.", "Satu argumen pada satu waktu."],
+    revision: ["Stay or switch?", "Ini keputusan terakhirmu."],
+    resolve: ["Final calls are sealed.", "Reality akan menentukan hasil."],
+  } as const;
+
   async function advance() {
     setBusy(true);
     setError("");
@@ -609,6 +653,7 @@ function MatchRoom({ s, stale }: { s: MatchView; stale: boolean }) {
       setBusy(false);
     }
   }
+
   async function commit(stage: "initial" | "final") {
     const choice =
       stage === "initial"
@@ -645,344 +690,317 @@ function MatchRoom({ s, stale }: { s: MatchView; stale: boolean }) {
       setBusy(false);
     }
   }
-  const isDraft =
-    ["think", "deliberate", "commit"].includes(s.phase) &&
-    !s.own.initialReceipt &&
-    !s.finishedPlaying;
+
+  const locked = s.own.initialReceipt?.state === "canonical_locked";
+  const finalLocked = s.own.finalReceipt?.state === "canonical_locked";
+  const switchChoice = s.own.initialChoice === "A" ? "B" : "A";
+  const currentResult = s.results.at(-1);
+
   return (
-    <>
-      <div className="match-top">
-        <div>
-          <MatchPair compact />
-          <span className="eyebrow muted">RONDE {s.round} / 3</span>
+    <div className="game-match-shell">
+      <header className="game-match-header">
+        <Link href="/arena" aria-label="Keluar dari pertandingan">
+          <ArrowLeft size={16} />
+          Arena
+        </Link>
+        <div className="game-round-progress">
+          <span>RONDE {s.round} / 3</span>
+          <div aria-label="Fase pertandingan">
+            {PHASES.map((phase, index) => (
+              <i
+                key={phase}
+                className={
+                  index === s.phaseIndex
+                    ? "active"
+                    : index < s.phaseIndex
+                      ? "past"
+                      : ""
+                }
+                aria-current={index === s.phaseIndex ? "step" : undefined}
+              />
+            ))}
+          </div>
         </div>
-        {!s.finishedPlaying && <Countdown snapshot={s} />}
-      </div>
-      <div className="phase-track" aria-label="Fase pertandingan">
-        {PHASES.map((phase, i) => (
-          <span
-            key={phase}
-            className={
-              s.phaseIndex === i ? "active" : s.phaseIndex > i ? "past" : ""
-            }
-            aria-current={s.phaseIndex === i ? "step" : undefined}
-          >
-            <i>{s.phaseIndex > i ? <Check size={10} /> : i + 1}</i>
-            {phase[0].toUpperCase() + phase.slice(1)}
-          </span>
-        ))}
-      </div>
+        <div className="game-phase-status">
+          <span>{s.finishedPlaying ? "ENDED" : s.phase.toUpperCase()}</span>
+          {!s.finishedPlaying && <Countdown snapshot={s} />}
+        </div>
+      </header>
+
       {stale && (
-        <p className="status-message danger" role="alert">
-          Koneksi sedang dipulihkan. Tindakan dinonaktifkan sampai status
-          terbaru diterima.
+        <p className="game-connection-error" role="alert">
+          Koneksi terputus. Tindakan dijeda sampai status terbaru diterima.
         </p>
       )}
-      <LivingBeliefField
-        snapshot={s}
-        stale={stale}
-        reduced={viewer?.preferences.motion === "reduce"}
-        activeCard={activeCard}
-        squad={ownSquad}
-        latestMessageId={s.chat.at(-1)?.id ?? null}
-        onCard={(id) => {
-          setActiveCard(id);
-          document
-            .getElementById(`argument-${id}`)
-            ?.focus({ preventScroll: true });
-          document
-            .getElementById(`argument-${id}`)
-            ?.scrollIntoView({ block: "nearest", behavior: "instant" });
-        }}
-      />
-      <div className="match-layout">
-        <section className="match-content">
-          <p className="eyebrow">
-            {s.settled
-              ? "RESOLVED"
-              : s.finishedPlaying
-                ? "OUTCOME PENDING"
-                : s.phase.toUpperCase()}
-          </p>
-          <h1>
-            {s.settled
-              ? "Semua ronde sudah punya hasil."
-              : s.finishedPlaying
-                ? "Terima kasih sudah membawa perspektifmu."
-                : titles[s.phase]}
-          </h1>
-          <p className="muted">
-            Pertanyaan ronde {s.round}: game mana yang mencatat pertumbuhan
-            relatif concurrent players lebih tinggi dalam jendela observasi 30
-            menit?
-          </p>
-          {s.phaseIndex >= 3 && !s.finishedPlaying && (
-            <ReceiptStatus receipt={s.own.initialReceipt} />
-          )}
-          {s.phaseIndex >= 3 && !s.own.initialReceipt && !s.finishedPlaying && (
-            <p className="status-message danger">
-              Initial call tidak terkunci sebelum deadline. Ronde ini akan
-              menjadi forfeit; kamu tetap bisa mengikuti cerita pertandingannya.
-            </p>
-          )}
-          {!s.finishedPlaying && (
-            <div className="prompt-options">
-              {(["A", "B"] as Choice[]).map((choice) => (
-                <button
-                  key={choice}
-                  className="choice-option"
-                  disabled={!isDraft || busy || stale}
-                  aria-pressed={(s.own.initialChoice ?? draft) === choice}
-                  onClick={() => setDraft(choice)}
-                >
-                  <span className="choice-letter">{choice}</span>
-                  <strong>
-                    {choice === "A" ? "Counter-Strike 2" : "Dota 2"}
-                  </strong>
-                  <p>Pertumbuhan relatif pemain</p>
-                  {(s.own.initialChoice ?? draft) === choice && (
-                    <Check size={17} />
-                  )}
-                </button>
-              ))}
+
+      <main className="game-stage" data-phase={s.phase}>
+        {!s.finishedPlaying ? (
+          <>
+            <div className="game-question">
+              <p>{phaseCopy[s.phase][0]}</p>
+              <h1>
+                Game mana yang akan mencatat pertumbuhan pemain relatif lebih
+                tinggi?
+              </h1>
+              <span>{phaseCopy[s.phase][1]}</span>
             </div>
-          )}
-          {s.phase === "think" && !s.finishedPlaying && (
-            <div className="match-action">
-              <h2>Mulai dengan pikiranmu sendiri.</h2>
-              <p>
-                Pilihan di atas masih draft dan hanya terlihat olehmu. Kamu
-                dapat mengubahnya sebelum dikunci saat Commit.
-              </p>
-            </div>
-          )}
-          {s.phase === "deliberate" && !s.finishedPlaying && (
-            <ArgumentEditor s={s} />
-          )}{" "}
-          {s.phase === "commit" && !s.finishedPlaying && (
-            <div className="match-action">
-              <h2>Call pertamamu.</h2>
-              <p>
-                Setelah canonical lock, pilihan tidak bisa diubah sampai
-                Revision. Diterima server belum berarti berhasil dikunci.
-              </p>
-              {!s.own.initialReceipt && (
-                <Button
-                  className="mt-5"
-                  disabled={!draft || busy || stale}
-                  onClick={() => commit("initial")}
-                >
-                  <LockKeyhole size={15} />
-                  {busy ? "Mengirim…" : `Kunci pilihan ${draft ?? ""}`}
-                </Button>
-              )}
-              <ReceiptStatus receipt={s.own.initialReceipt} />
-            </div>
-          )}
-          {["reveal", "council", "revision"].includes(s.phase) &&
-            !s.finishedPlaying &&
-            s.initial && (
+
+            {s.phase === "think" && (
               <>
-                <Beliefs initial={s.initial} />
-                <p className="text-xs muted mb-6">
-                  Ini initial belief, belum hasil pertandingan. Skor menunggu
-                  final belief dan outcome.
+                <GameChoices
+                  selected={draft}
+                  disabled={busy || stale}
+                  onSelect={setDraft}
+                />
+                <p className="game-private-note">
+                  {draft
+                    ? `Pilihan ${draft} tersimpan sebagai draft privat.`
+                    : "Pilih A atau B."}
                 </p>
               </>
             )}
-          {s.phase === "council" && !s.finishedPlaying && (
-            <>
-              <h2 className="text-xl">Suara dari Hive Purple</h2>
-              <p className="muted text-xs mt-3">
-                Baca alasan Squad lain. Identitas dan angka adalah konteks,
-                bukan petunjuk siapa yang pasti benar.
-              </p>
-              <div className="council-list">
-                {s.cards.map((c) => (
-                  <article
-                    key={c.id}
-                    id={`argument-${c.id}`}
-                    tabIndex={0}
-                    onFocus={() => setActiveCard(c.id)}
-                    onMouseEnter={() => setActiveCard(c.id)}
-                    className={`argument-card ${activeCard === c.id ? "argument-highlight" : ""} ${c.unavailable ? "unavailable" : ""}`}
-                  >
-                    <header>
-                      <Crest symbol={c.symbol} size={28} />
-                      <strong>{c.squad}</strong>
-                      <span>{percent(c.belief)} A</span>
-                      <ReportDialog target={`card-${c.symbol}`} />
-                    </header>
+
+            {s.phase === "deliberate" && (
+              <div className="game-deliberation">
+                <SquadChat s={s} />
+                <GameChoices
+                  selected={draft}
+                  disabled={busy || stale}
+                  onSelect={setDraft}
+                />
+                <ArgumentEditor s={s} />
+              </div>
+            )}
+
+            {s.phase === "commit" && (
+              <div className="game-commit">
+                {!s.own.initialReceipt ? (
+                  <>
+                    <GameChoices
+                      selected={draft}
+                      disabled={busy || stale}
+                      onSelect={setDraft}
+                    />
+                    <Button
+                      size="lg"
+                      disabled={!draft || busy || stale}
+                      onClick={() => commit("initial")}
+                    >
+                      <LockKeyhole size={17} />
+                      {busy ? "Mengunci…" : `Lock decision ${draft ?? ""}`}
+                    </Button>
+                  </>
+                ) : (
+                  <div className={`game-lock-state ${locked ? "locked" : ""}`}>
+                    {locked ? (
+                      <ShieldCheck />
+                    ) : (
+                      <LoaderCircle className="animate-spin" />
+                    )}
+                    <h2>{locked ? "Decision locked." : "Locking decision…"}</h2>
                     <p>
-                      {c.unavailable
-                        ? "Argumen tidak tersedia setelah tinjauan moderasi."
-                        : c.text}
+                      {locked ? "Menunggu Squad lain." : "Jangan tutup Arena."}
                     </p>
-                  </article>
+                  </div>
+                )}
+                <ReceiptStatus receipt={s.own.initialReceipt} />
+              </div>
+            )}
+
+            {s.phase === "reveal" &&
+              (s.initial ? (
+                <RevealBoard s={s} />
+              ) : (
+                <p className="game-forfeit">
+                  Pilihan awal tidak berhasil dikunci.
+                </p>
+              ))}
+
+            {s.phase === "council" && (
+              <div className="game-council">
+                {s.cards.map((card) => (
+                  <button
+                    key={card.id}
+                    aria-pressed={activeCard === card.id}
+                    disabled={card.unavailable}
+                    onClick={() => setActiveCard(card.id)}
+                  >
+                    <Crest symbol={card.symbol} size={34} />
+                    <span>{card.squad}</span>
+                    <blockquote>
+                      “
+                      {card.unavailable ? "Argumen tidak tersedia." : card.text}
+                      ”
+                    </blockquote>
+                  </button>
                 ))}
               </div>
-            </>
-          )}
-          {s.phase === "revision" && !s.finishedPlaying && (
-            <div className="match-action">
-              <h2>Keputusan terakhirmu.</h2>
-              {s.own.initialReceipt?.state !== "canonical_locked" ? (
-                <p>
-                  Initial call tidak berhasil dikunci. Revisi tidak tersedia;
-                  ronde ini dicatat sebagai forfeit untuk Hivemu.
-                </p>
-              ) : s.own.finalReceipt ? (
-                <ReceiptStatus receipt={s.own.finalReceipt} />
-              ) : (
-                <>
-                  <p>
-                    Pilihan awalmu: <strong>{s.own.initialChoice}</strong>.
-                    Tidak mengirim final call akan menjadi Defaulted Stay.
-                  </p>
-                  <div className="revision-options">
-                    <button
-                      aria-pressed={revision === "stay"}
-                      onClick={() => setRevision("stay")}
-                    >
-                      Stay
-                      <small>Tetap pada pilihan {s.own.initialChoice}</small>
-                    </button>
-                    <button
-                      aria-pressed={revision === "switch"}
-                      onClick={() => setRevision("switch")}
-                    >
-                      Switch
-                      <small>
-                        Beralih ke {s.own.initialChoice === "A" ? "B" : "A"}
-                      </small>
-                    </button>
+            )}
+
+            {s.phase === "revision" && (
+              <div className="game-revision">
+                {!locked ? (
+                  <div className="game-forfeit">
+                    Initial call tidak terkunci. Revision tidak tersedia.
                   </div>
-                  {revision === "switch" && (
-                    <div className="field">
-                      <label htmlFor="attribution">
-                        Apa yang membantu mengubah pikiranmu?
-                      </label>
-                      <select
-                        id="attribution"
-                        className="native-select"
-                        value={attribution}
-                        onChange={(e) => setAttribution(e.target.value)}
+                ) : finalLocked ? (
+                  <div className="game-lock-state locked">
+                    <ShieldCheck />
+                    <h2>Final call locked.</h2>
+                    <p>Menunggu fase Resolve.</p>
+                  </div>
+                ) : (
+                  <>
+                    <p>
+                      Pilihan awalmu <strong>{s.own.initialChoice}</strong>
+                      {s.initial && s.initial.purple !== null && (
+                        <> · Hive percaya {percent(s.initial.purple)} A</>
+                      )}
+                    </p>
+                    <div className="game-revision-actions">
+                      <button
+                        aria-pressed={revision === "stay"}
+                        onClick={() => {
+                          setRevision("stay");
+                          setAttribution("");
+                        }}
                       >
-                        <option value="">Pilih satu alasan</option>
-                        {s.cards
-                          .filter((c) => c.symbol !== 0 && !c.unavailable)
-                          .map((c) => (
-                            <option key={c.id} value={`card-${c.symbol}`}>
-                              Argumen Squad {c.squad}
-                            </option>
-                          ))}
-                        <option value="own-squad">
-                          Diskusi dalam Squad sendiri
-                        </option>
-                        <option value="own-reasoning">
-                          Pertimbangan pribadi
-                        </option>
-                      </select>
-                      <small>
-                        Atribusi pada argumen resmi bersifat opsional. Kategori
-                        alasan tetap diperlukan.
-                      </small>
+                        <span>STAY WITH {s.own.initialChoice}</span>
+                        <strong>{s.own.initialChoice}</strong>
+                      </button>
+                      <button
+                        aria-pressed={revision === "switch"}
+                        onClick={() => setRevision("switch")}
+                      >
+                        <span>SWITCH TO {switchChoice}</span>
+                        <strong>{switchChoice}</strong>
+                      </button>
                     </div>
-                  )}
-                  <Button
-                    disabled={
-                      busy || stale || (revision === "switch" && !attribution)
-                    }
-                    onClick={() => commit("final")}
-                  >
-                    <LockKeyhole size={15} />
-                    {busy
-                      ? "Mengirim…"
-                      : revision === "stay"
-                        ? "Kunci Stay"
-                        : "Kunci Switch"}
-                  </Button>
-                </>
-              )}
-            </div>
-          )}
-          {s.phase === "resolve" && !s.finishedPlaying && (
-            <div className="match-action">
-              <h2>Menyelesaikan reveal final.</h2>
-              <p>
-                Final belief belum ditampilkan sebelum barrier dan validasi
-                selesai. Setelah ini, ronde berikutnya dimulai dan outcome akan
-                menyusul.
-              </p>
-            </div>
-          )}
-          {s.finishedPlaying && (
-            <>
-              {s.final && <Beliefs initial={s.final} final />}
-              <div className="match-action">
-                <h2>
-                  {s.settled
-                    ? "Replay-mu siap dibaca."
-                    : "Menunggu outcome yang sah."}
-                </h2>
-                <p>
-                  {s.settled
-                    ? "Lihat hasil setiap ronde, perubahan keyakinan, dan skor akhir dua Hive."
-                    : "Final belief sudah terbuka. Outcome memakai jendela observasi 30 menit. Dalam demo, kamu bisa memajukan waktu untuk melihat hasil."}
-                </p>
-                {s.settled && (
-                  <Button className="mt-5" asChild>
-                    <Link href="/arena/founding-001/results">
-                      Lihat hasil pertandingan <ArrowRight size={15} />
-                    </Link>
-                  </Button>
+                    {revision === "switch" && (
+                      <div className="game-attribution">
+                        <span>What changed your mind?</span>
+                        <div>
+                          {s.cards
+                            .filter(
+                              (card) => card.symbol !== 0 && !card.unavailable,
+                            )
+                            .slice(0, 3)
+                            .map((card) => (
+                              <button
+                                key={card.id}
+                                aria-pressed={
+                                  attribution === `card-${card.symbol}`
+                                }
+                                onClick={() =>
+                                  setAttribution(`card-${card.symbol}`)
+                                }
+                              >
+                                {card.squad}
+                              </button>
+                            ))}
+                          <button
+                            aria-pressed={attribution === "own-reasoning"}
+                            onClick={() => setAttribution("own-reasoning")}
+                          >
+                            Reconsidered
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                    <Button
+                      size="lg"
+                      disabled={
+                        busy || stale || (revision === "switch" && !attribution)
+                      }
+                      onClick={() => commit("final")}
+                    >
+                      <LockKeyhole size={16} />
+                      {busy ? "Mengunci…" : "Lock final call"}
+                    </Button>
+                  </>
                 )}
               </div>
-            </>
-          )}
-          {s.results.some((r) => r.round < s.round) && (
-            <div className="mt-7">
-              <h3 className="text-sm mb-4">Ronde sebelumnya</h3>
-              {s.results
-                .filter((r) => r.round < s.round)
-                .map((r) => (
-                  <div className="metric-row" key={r.round}>
-                    <span>Ronde {r.round}</span>
-                    <strong>
-                      {r.status === "pending"
-                        ? `Final ${percent(r.purple.final)} A · outcome pending`
-                        : r.status === "void"
-                          ? "Void"
-                          : `${score(r.purple.score)} — ${score(r.chog.score)}`}
-                    </strong>
-                  </div>
-                ))}
-            </div>
-          )}
-          {error && (
-            <p role="alert" className="form-error">
-              {error}
-            </p>
-          )}
-        </section>
-        <SquadChat s={s} />
-      </div>
-      <div className="demo-controls">
-        <p>
-          DEMO · Waktu dan anggota lain disimulasikan. Tombol ini memajukan fase
-          untuk mengeksplorasi alur tanpa menunggu durasi penuh.
-        </p>
-        {!s.settled && (
-          <Button variant="outline" onClick={advance} disabled={busy || stale}>
-            <FastForward size={14} />
-            {s.finishedPlaying
-              ? "Majukan ke outcome demo"
-              : "Majukan fase demo"}
-          </Button>
+            )}
+
+            {s.phase === "resolve" && (
+              <div className="game-resolve-wait">
+                <div>
+                  <ShieldCheck size={36} />
+                </div>
+                <h2>Final calls sealed.</h2>
+                <p>Reality sedang menunggu snapshot akhir.</p>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="game-ended">
+            {s.settled && currentResult?.status === "resolved" ? (
+              <>
+                <p>REALITY</p>
+                <strong>{currentResult.outcome}</strong>
+                <h1>
+                  {currentResult.outcome === "A"
+                    ? "Counter-Strike 2"
+                    : "Dota 2"}
+                </h1>
+                <div className="game-outcome-shift">
+                  <span>YOUR HIVE</span>
+                  <strong>
+                    {percent(currentResult.purple.initial)} A
+                    <ArrowRight size={15} />
+                    {percent(currentResult.purple.final)} A
+                  </strong>
+                </div>
+                <div className="game-outcome-lift">
+                  <span>WISDOM LIFT</span>
+                  <strong>{lift(currentResult.purple.lift)}</strong>
+                </div>
+                <p className="game-outcome-story">
+                  {currentResult.purple.lift !== null &&
+                  currentResult.purple.lift > 0
+                    ? "Council changed the room."
+                    : currentResult.purple.lift !== null &&
+                        currentResult.purple.lift < 0
+                      ? "The room moved away from reality."
+                      : "The room held its ground."}
+                </p>
+                <Button asChild size="lg">
+                  <Link href="/arena/founding-001/results">
+                    View replay <ArrowRight size={16} />
+                  </Link>
+                </Button>
+              </>
+            ) : (
+              <>
+                <div className="game-reality-orbit">
+                  <Timer size={30} />
+                </div>
+                <h1>Waiting for reality.</h1>
+                <p>Semua final call sudah terkunci. Outcome belum diumumkan.</p>
+              </>
+            )}
+          </div>
         )}
-        {s.settled && <ProofLink />}
+
+        {error && (
+          <p role="alert" className="form-error game-error">
+            {error}
+          </p>
+        )}
+      </main>
+
+      <div className="game-demo-control">
+        <span>DEMO</span>
+        {!s.settled ? (
+          <Button variant="ghost" onClick={advance} disabled={busy || stale}>
+            <FastForward size={14} />
+            {s.finishedPlaying ? "Majukan outcome" : "Majukan fase"}
+          </Button>
+        ) : (
+          <ProofLink />
+        )}
       </div>
-    </>
+    </div>
   );
 }
 function OutcomeSummary({ data }: { data: Replay }) {

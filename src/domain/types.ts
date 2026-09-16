@@ -117,6 +117,7 @@ export type MatchView = {
     defaulted: boolean;
   };
   cards: Card[];
+  revealChoices: { squad: string; symbol: number; choice: Choice | null }[];
   chat: { id: string; author: string; text: string; avatar: number }[];
   argument: string;
   canEditArgument: boolean;

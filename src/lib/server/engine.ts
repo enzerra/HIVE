@@ -374,6 +374,18 @@ export function snapshot(
             ),
           }))
         : [],
+    revealChoices: initialAllowed
+      ? ["Aster", "Orbit", "Moss", "Echo", "Nova"].map((squad, i) => ({
+          squad,
+          symbol: i,
+          choice:
+            i === 0 && ri?.state !== "canonical_locked"
+              ? null
+              : initialVectors[p.round][i] >= 2
+                ? ("A" as const)
+                : ("B" as const),
+        }))
+      : [],
     chat: spectator || !started || p.index === 0 ? [] : w.chat[p.round],
     argument:
       spectator || !started || p.index === 0 ? "" : w.arguments[p.round],

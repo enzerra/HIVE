@@ -80,6 +80,7 @@ describe("phase authority and disclosure", () => {
     expect(view.own.initialChoice).toBeNull();
     expect(view.chat).toEqual([]);
     expect(view.cards).toEqual([]);
+    expect(view.revealChoices).toEqual([]);
     expect(
       view.results.every(
         (r) =>
@@ -92,6 +93,14 @@ describe("phase authority and disclosure", () => {
     move(w, 95);
     view = snapshot(w, real, true);
     expect(view.initial?.purple).toBe(550000);
+    expect(view.revealChoices.map((item) => item.choice)).toEqual([
+      "A",
+      "B",
+      "A",
+      "B",
+      "A",
+    ]);
+    expect(view.cards).toEqual([]);
     expect(view.final).toBeNull();
     move(w, 165);
     commit(w, "final");
