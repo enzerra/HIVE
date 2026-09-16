@@ -16,6 +16,7 @@ type CallState = {
   finalLocked: boolean;
   reason: string;
   discussion: OpenCall["discussion"];
+  closesAt: string;
 };
 const store = globalThis as unknown as {
   hiveQuickCalls?: Map<string, CallState>;
@@ -46,9 +47,12 @@ function state(viewerId: string) {
       finalLocked: false,
       reason: "",
       discussion: [...seededDiscussion],
+      closesAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
     };
     states.set(viewerId, value);
   }
+  if (!value.closesAt)
+    value.closesAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
   return value;
 }
 export function quickCall(viewerId: string): OpenCall {
@@ -70,6 +74,8 @@ export function quickCall(viewerId: string): OpenCall {
     source: "Steam snapshot resolver · simulasi demo",
     metric: "Perubahan relatif concurrent players",
     window: "60 menit",
+    closesAt:
+      s.stage === "open" || s.stage === "discussing" ? s.closesAt : null,
     participants: s.initialLocked ? 128 : 127,
     squads: 18,
     initialChoice: s.initialChoice,
@@ -106,6 +112,7 @@ export function publicQuickCall(): OpenCall {
     reason: "",
     belief: { a: 570000, b: 430000 },
     discussion: [],
+    closesAt: null,
     outcome: "A",
     score: null,
     wisdomLift: null,

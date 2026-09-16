@@ -1,9 +1,9 @@
 "use client";
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ArrowUpRight,
   Bell,
@@ -17,7 +17,11 @@ import {
   Users,
   House,
   Swords,
+  ArrowRight,
+  CheckCircle2,
+  Clock3,
   Radio,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,9 +41,10 @@ import {
 import { Avatar, Mark } from "./identity";
 import { useSession } from "@/lib/client/session";
 import { api, post } from "@/lib/client/api";
+import type { OpenCall } from "@/domain/types";
+import "./pulse-companion.css";
 const nav = [
   ["/home", "Home"],
-  ["/calls", "Calls"],
   ["/arena", "Arena"],
   ["/explore", "Hives"],
   ["/rankings", "Rankings"],
@@ -247,18 +252,167 @@ export function PageShell({
         {children}
       </main>
       {!focus && <Footer />}
+      {!focus && <PulseCompanion />}
       {!focus && <MobileNavigation />}
     </>
   );
 }
+
+function countdown(deadline: string | null, now: number) {
+  if (!deadline) return null;
+  const seconds = Math.max(0, Math.floor((Date.parse(deadline) - now) / 1000));
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const rest = seconds % 60;
+  return `${hours ? `${hours}:` : ""}${String(minutes).padStart(2, "0")}:${String(rest).padStart(2, "0")}`;
+}
+
+function PulseCompanion() {
+  const { data: viewer } = useSession();
+  const path = usePathname();
+  const [open, setOpen] = useState(false);
+  const [now, setNow] = useState(0);
+  const calls = useQuery({
+    queryKey: ["calls"],
+    queryFn: () => api<OpenCall[]>("calls"),
+    enabled: !!viewer?.onboarded,
+    refetchInterval: 15000,
+  });
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(timer);
+  }, []);
+  if (!viewer?.onboarded || path.startsWith("/calls")) return null;
+  const call = calls.data?.[0];
+  const remaining = countdown(call?.closesAt ?? null, now);
+  const resolved = call?.stage === "resolved";
+  const resolving = call?.stage === "resolving";
+  const voided = call?.stage === "void";
+  return (
+    <div className="pulse-companion" data-open={open}>
+      {open && (
+        <aside className="pulse-panel" aria-label="Pulse Companion">
+          <header>
+            <div>
+              <span className="pulse-live-dot" />
+              <strong>PULSE</strong>
+            </div>
+            <button onClick={() => setOpen(false)} aria-label="Tutup Pulse">
+              <X size={16} />
+            </button>
+          </header>
+          {calls.isPending ? (
+            <div className="pulse-loading">Mencari Call yang hidup…</div>
+          ) : !call ? (
+            <div className="pulse-empty">
+              <strong>Belum ada Pulse baru.</strong>
+              <p>Call muncul setelah sumber outcome siap diverifikasi.</p>
+            </div>
+          ) : (
+            <>
+              <div className="pulse-message">
+                <span className="pulse-orb">
+                  <Radio size={17} />
+                </span>
+                <div>
+                  <small>
+                    {resolved
+                      ? "OUTCOME AVAILABLE"
+                      : voided
+                        ? "CALL VOID"
+                        : resolving
+                          ? "RESOLVER ACTIVE"
+                          : call.initialLocked
+                            ? "YOUR CALL IS LOCKED"
+                            : "NEW QUICK PULSE"}
+                  </small>
+                  <strong>
+                    {resolved
+                      ? `${call.outcome} · ${call.outcome === "A" ? call.optionA : call.optionB} menang.`
+                      : voided
+                        ? "Source tidak dapat diverifikasi."
+                        : resolving
+                          ? "Reality sedang memeriksa hasil."
+                          : call.initialLocked
+                            ? `${call.initialChoice} terkunci. Dengarkan Squad sebelum final call.`
+                            : "Steam sedang bergerak. Apa prediksimu?"}
+                  </strong>
+                </div>
+              </div>
+              <div className="pulse-call-preview">
+                <p>{call.question}</p>
+                {!resolved && !resolving && !voided && remaining && (
+                  <div className="pulse-timer">
+                    <Clock3 size={13} />
+                    <span>Prediksi tutup dalam</span>
+                    <strong>{remaining}</strong>
+                  </div>
+                )}
+                {resolving && (
+                  <div className="pulse-resolving">
+                    <i /> Snapshot akhir sedang diverifikasi
+                  </div>
+                )}
+                {resolved && (
+                  <div className="pulse-resolved">
+                    <CheckCircle2 size={15} /> Hasil sudah sah dalam demo
+                  </div>
+                )}
+              </div>
+              <Button asChild className="pulse-cta">
+                <Link
+                  href={
+                    resolved ? `/calls/${call.id}/result` : `/calls/${call.id}`
+                  }
+                >
+                  {resolved
+                    ? "Lihat hasil"
+                    : call.initialLocked
+                      ? "Buka diskusi"
+                      : "Buat prediksi"}
+                  <ArrowRight size={15} />
+                </Link>
+              </Button>
+              <p className="pulse-demo-note">Steam snapshot · simulasi demo</p>
+            </>
+          )}
+        </aside>
+      )}
+      <button
+        className="pulse-trigger"
+        onClick={() => setOpen((value) => !value)}
+        aria-expanded={open}
+        aria-label={open ? "Tutup Pulse Companion" : "Buka Pulse Companion"}
+      >
+        <span className="pulse-trigger-icon">
+          {resolved ? <CheckCircle2 size={19} /> : <Radio size={19} />}
+          {call && !voided && <i />}
+        </span>
+        <span>
+          <strong>Pulse</strong>
+          <small>
+            {resolved
+              ? "Hasil tersedia"
+              : call?.initialLocked
+                ? (remaining ?? "Resolving")
+                : call
+                  ? "Call baru"
+                  : "Anytime"}
+          </small>
+        </span>
+      </button>
+    </div>
+  );
+}
+
 function MobileNavigation() {
   const { data: v } = useSession(),
     path = usePathname();
   if (!v) return null;
   const links = [
     { href: "/home", label: "Home", Icon: House },
-    { href: "/calls", label: "Calls", Icon: Radio },
     { href: "/arena", label: "Arena", Icon: Swords },
+    { href: "/explore", label: "Hives", Icon: Users },
     { href: `/humans/${v.handle}`, label: "Profil", Icon: User },
   ];
   return (

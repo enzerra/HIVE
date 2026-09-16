@@ -150,6 +150,7 @@ export type OpenCall = {
   source: string;
   metric: string;
   window: string;
+  closesAt: string | null;
   participants: number;
   squads: number;
   initialChoice: Choice | null;

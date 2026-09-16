@@ -17,6 +17,7 @@ describe("Quick Pulse disclosure and lifecycle", () => {
     const before = quickCall(id);
     expect(before.belief).toBeNull();
     expect(before.discussion).toEqual([]);
+    expect(Date.parse(before.closesAt!)).toBeGreaterThan(Date.now());
 
     const after = lockQuickCall(id, "B", "Peak hour Dota belum dimulai.");
     expect(after.stage).toBe("discussing");
@@ -34,7 +35,9 @@ describe("Quick Pulse disclosure and lifecycle", () => {
       "Pertumbuhan relatif adalah metrik kuncinya.",
     );
     reviseQuickCall(id, "A");
-    expect(advanceQuickCall(id).stage).toBe("resolving");
+    const resolving = advanceQuickCall(id);
+    expect(resolving.stage).toBe("resolving");
+    expect(resolving.closesAt).toBeNull();
     const result = advanceQuickCall(id);
 
     expect(result.stage).toBe("resolved");
@@ -42,6 +45,7 @@ describe("Quick Pulse disclosure and lifecycle", () => {
     expect(result.score).toBe(100000000);
     expect(result.wisdomLift).toBe(100000000);
     expect(result.evidence?.a.growth).toBe("+12%");
+    expect(result.closesAt).toBeNull();
   });
 
   it("voids safely without declaring an outcome or changing reputation", () => {

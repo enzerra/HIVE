@@ -6,6 +6,8 @@ Frontend HIVE dengan Next.js App Router, React, TypeScript, shadcn/ui, dan Tailw
 
 Arena memakai **Living Belief Field** sebagai visualisasi pertandingan. Purple dan Chog memengaruhi inti perspektif di tengah; belief tetap tersembunyi sebelum Reveal, argumen Squad menjadi node saat Council, dan snapshot final tiga ronde bergabung saat pertandingan selesai.
 
+**Quick Pulse** tidak mengambil tempat di navigasi utama. Ia muncul secara kontekstual di Home dan melalui **Pulse Companion** mengambang: Call baru, countdown penutupan prediksi, diskusi setelah lock, status resolver, dan outcome memakai satu lifecycle yang sama. Detail prediksi tetap berada di halaman terpisah agar panel tidak berubah menjadi mini-game atau chatbot bebas.
+
 ## Jalankan
 
 Memerlukan Node.js 22.15 atau lebih baru.

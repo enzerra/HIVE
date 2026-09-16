@@ -207,11 +207,11 @@ export function HomePage() {
             <section className="mb-8">
               <div className="section-title">
                 <div>
-                  <p className="eyebrow">OPEN CALL · ANYTIME</p>
-                  <h2>Prediksi yang sedang hidup.</h2>
+                  <p className="eyebrow">QUICK PULSE · ANYTIME</p>
+                  <h2>Satu pertanyaan untuk hari ini.</h2>
                 </div>
                 <Link className="text-link subtle" href="/calls">
-                  Lihat semua <ArrowRight size={13} />
+                  Buka Pulse <ArrowRight size={13} />
                 </Link>
               </div>
               <CallCard call={calls.data[0]} />
