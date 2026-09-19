@@ -120,6 +120,7 @@ export function CallsPage() {
   return (
     <AuthGate>
       <PageTitle
+        scene="pulse"
         eyebrow="OPEN CALLS · ANYTIME"
         title="Apa yang akan terjadi selanjutnya?"
         description="Prediksi kapan saja. Kunci pikiranmu sebelum melihat suara komunitas."

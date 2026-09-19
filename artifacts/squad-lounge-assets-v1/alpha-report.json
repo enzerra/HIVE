@@ -1,0 +1,58 @@
+[
+  {
+    "file": "coffee-table-draft.png",
+    "width": 1312,
+    "height": 1199,
+    "centerAlpha": 255,
+    "transparentSamplePercent": 0.0,
+    "status": "rejected-baked-background"
+  },
+  {
+    "file": "coffee-table-v2.png",
+    "width": 1374,
+    "height": 1145,
+    "centerAlpha": 252,
+    "transparentSamplePercent": 75.08,
+    "status": "alpha-present-needs-assembly-review"
+  },
+  {
+    "file": "doorway-open-draft.png",
+    "width": 1536,
+    "height": 1024,
+    "centerAlpha": 255,
+    "transparentSamplePercent": 0.0,
+    "status": "rejected-baked-background"
+  },
+  {
+    "file": "doorway-open-v2.png",
+    "width": 1230,
+    "height": 1278,
+    "centerAlpha": 0,
+    "transparentSamplePercent": 72.0,
+    "status": "alpha-present-needs-assembly-review"
+  },
+  {
+    "file": "floor-tile.png",
+    "width": 1536,
+    "height": 1024,
+    "centerAlpha": 253,
+    "transparentSamplePercent": 41.47,
+    "status": "alpha-present-needs-assembly-review"
+  },
+  {
+    "file": "sofa-curved.png",
+    "width": 1536,
+    "height": 1024,
+    "centerAlpha": 253,
+    "transparentSamplePercent": 60.42,
+    "status": "alpha-present-needs-assembly-review"
+  },
+  {
+    "file": "wall-module.png",
+    "width": 1536,
+    "height": 1024,
+    "centerAlpha": 253,
+    "transparentSamplePercent": 55.76,
+    "status": "alpha-present-needs-assembly-review"
+  }
+]

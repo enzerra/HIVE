@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="id">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>HIVE · Central Lounge Asset Lab</title><link rel="stylesheet" href="preview.css"></head>
+<body>
+<header><a class="brand" href="./index.html">hive<span>.</span></a><div><p class="eyebrow">CENTRAL LOUNGE / 2D ASSET LAB</p><h1>Satu ruang. Banyak percakapan.</h1></div><span class="tag">Preview lokal · satu pemain</span></header>
+<main>
+<div class="toolbar">
+ <label>Karakter <select id="character"><option value="wolf">Serigala</option><option value="fox">Rubah</option><option value="frog">Katak</option></select></label>
+ <label>Inspeksi lokasi <select id="location"><option value="">Pindahkan karakter…</option></select></label>
+ <button id="tour" aria-pressed="false">Tur ruangan</button><button id="pause" aria-pressed="false">Jeda</button><button id="camera" aria-pressed="false">Fokus karakter</button>
+ <label class="check"><input id="motion" type="checkbox">Kurangi gerakan</label>
+ <button id="debug" aria-pressed="false">Batas jalan</button><button id="background" aria-pressed="false">Latar terang</button>
+</div>
+<p id="status" role="status">Memuat latar dan sprite…</p><button id="retry" hidden>Muat ulang aset</button>
+<section class="stage" aria-label="Preview perakitan Central Lounge">
+ <svg id="world" viewBox="0 0 1672 941" role="group" tabindex="0" aria-label="Map inspeksi. Gunakan WASD atau tombol panah untuk bergerak, E untuk memeriksa lokasi." aria-describedby="help"><defs id="definitions"></defs><image id="terrain" href="layers/room-background.png" width="1672" height="941"/><g id="ground"></g><g id="actors"></g><g id="geometry" visibility="hidden" pointer-events="none"></g></svg>
+ <noscript><p>JavaScript diperlukan untuk preview gerak. <a href="hive-central-lounge-2d-concept-v1.png">Lihat konsep ruangan</a> atau <a href="layers/room-background.png">latar map</a>.</p></noscript>
+</section>
+<div class="bottom"><div><strong id="place">Central Lounge</strong><p id="help">Klik map lalu WASD / panah. Dekati lokasi dan tekan E. Tab tetap berpindah antar-kontrol.</p></div><button id="interact" disabled>Dekati lokasi</button><div class="dpad" aria-label="Kontrol arah sentuh"><button data-key="ArrowUp" aria-label="Berjalan ke atas">↑</button><button data-key="ArrowLeft" aria-label="Berjalan ke kiri">←</button><button data-key="ArrowDown" aria-label="Berjalan ke bawah">↓</button><button data-key="ArrowRight" aria-label="Berjalan ke kanan">→</button></div></div>
+<details id="gallery"><summary>Periksa seluruh aset <span>10 gambar · 36 pose karakter</span></summary><div id="asset-grid"></div></details>
+<footer>Ini preview bahan visual dan gerak lokal, belum multiplayer atau integrasi aplikasi. Pilihan lokasi menampilkan penjelasan, bukan membuka fitur produksi. <a href="HANDOFF.md">Catatan serah terima</a> · <a href="PRODUCTION-PROMPTS.md">Prompt</a> · <a href="assets.json">Metadata sprite</a></footer>
+</main>
+<dialog id="detail"><form method="dialog"><button class="close" aria-label="Tutup penjelasan">×</button><p class="eyebrow">AREA HIVE</p><h2 id="detail-title"></h2><p id="detail-description"></p><p class="muted">Simulasi interaksi pada preview aset. Tidak mengubah akun atau data pertandingan.</p><button value="close">Kembali ke Lounge</button></form></dialog>
+<script type="module" src="preview.mjs"></script>
+</body></html>

@@ -30,14 +30,19 @@ export function PageTitle({
   title,
   description,
   action,
+  scene,
 }: {
   eyebrow?: string;
   title: string;
   description?: string;
   action?: React.ReactNode;
+  scene?: "arena" | "squad" | "hive" | "pulse" | "replay" | "wisdom";
 }) {
   return (
-    <div className="page-title">
+    <div
+      className={`page-title${scene ? ` world-scene world-scene-${scene}` : ""}`}
+    >
+      {scene && <span className="world-scene-art" aria-hidden="true" />}
       <div>
         {eyebrow && <p className="eyebrow">{eyebrow}</p>}
         <h1>{title}</h1>

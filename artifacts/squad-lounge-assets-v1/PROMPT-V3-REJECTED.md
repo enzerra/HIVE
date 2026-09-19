@@ -1,0 +1,5 @@
+# Rejected horizontal doorway study
+
+Built-in image_gen with sofa-curved.png and doorway-open-v2.png as references. Output rejected: alpha at both corner and center is 255; checkerboard is baked into the image. Not used by assembly.
+
+One standalone upright OPEN DOORWAY asset for HIVE Squad Lounge. Reference image 1 supplies the exact horizontal camera orientation, painted detail, graphite stone and muted brass treatment. Reference image 2 is the old doorway: replace its rotated/skewed camera with the orientation of reference 1. Front-facing orthographic elevated camera: the lintel and threshold run perfectly HORIZONTAL across the image, left and right jambs vertical and equal height, top surfaces visible. Graphite block frame, restrained brass inset, warm cream threshold. Crisp illustrated game art, not photorealistic marble. Wide empty opening for two game characters. Actual RGBA transparency outside AND in the door opening. No checkerboard pixels, no environment, no ground plane, no lettering, no cast shadow, no logo. Full silhouette within generous margins. Single isolated object, no comparison sheet.

@@ -1,0 +1,154 @@
+/* Quiet, theme-aware sky behind the playable island. */
+.home-world {
+  --sky-cloud: #ffffffa6;
+  --sky-haze: #c2b8e333;
+  background:
+    radial-gradient(ellipse at 78% 18%, #fff7df 0%, transparent 40%),
+    linear-gradient(165deg, #b9cfe1 0%, #e0e5eb 44%, #d3d4e5 74%, #b4c4d6 100%);
+  isolation: isolate;
+}
+.dark .home-world {
+  --sky-cloud: #7185b52b;
+  --sky-haze: #8f75d929;
+  background:
+    radial-gradient(ellipse at 75% 18%, #41466766, transparent 45%),
+    linear-gradient(160deg, #0c1324 0%, #1e2c46 46%, #293752 74%, #101c32 100%);
+}
+.home-world::before,
+.home-world::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+.home-world::before {
+  background:
+    radial-gradient(ellipse at 4% 35%, var(--sky-cloud) 0%, transparent 28%),
+    radial-gradient(ellipse at 97% 66%, var(--sky-cloud) 0%, transparent 30%),
+    radial-gradient(ellipse at 22% 98%, var(--sky-cloud) 0%, transparent 38%),
+    radial-gradient(ellipse at 70% 94%, var(--sky-haze) 0%, transparent 36%);
+  filter: blur(18px);
+}
+.home-world::after {
+  background:
+    radial-gradient(ellipse at 0% 78%, var(--sky-cloud), transparent 26%),
+    radial-gradient(ellipse at 100% 12%, var(--sky-cloud), transparent 24%);
+  opacity: 0.65;
+}
+.dark .home-world::after {
+  background:
+    radial-gradient(circle at 12% 23%, #d7e0ff99 0 1px, transparent 2px),
+    radial-gradient(circle at 84% 15%, #d7e0ff88 0 1px, transparent 2px),
+    radial-gradient(circle at 92% 46%, #d7e0ff66 0 1px, transparent 2px),
+    radial-gradient(circle at 6% 61%, #d7e0ff77 0 1px, transparent 2px),
+    radial-gradient(circle at 38% 12%, #d7e0ff66 0 1px, transparent 2px),
+    radial-gradient(ellipse at 0% 78%, var(--sky-cloud), transparent 30%);
+}
+body:has(.home-world) .site-header {
+  inset: 18px 4% auto;
+  width: 92%;
+  max-width: 1440px;
+  margin: auto;
+  height: 76px;
+  border: 1px solid #ffffffb3;
+  border-radius: 999px;
+  background: #ffffff8c;
+  color: #202b40;
+  backdrop-filter: blur(24px) saturate(135%);
+  box-shadow:
+    0 12px 40px #33425a12,
+    inset 0 1px 0 #ffffff66;
+  padding: 0 26px;
+}
+.dark body:has(.home-world) .site-header {
+  background: #121a2d99;
+  border-color: #d2ddff22;
+  color: #f0f2fb;
+  box-shadow:
+    0 12px 40px #060a192e,
+    inset 0 1px 0 #ffffff0b;
+}
+body:has(.home-world) .world-header-welcome span {
+  color: inherit;
+  opacity: 0.65;
+}
+body:has(.home-world) .mobile-menu {
+  display: inline-flex !important;
+}
+.home-world .world-frame {
+  inset: 108px 0 0;
+}
+.home-world .world-frame:focus-visible {
+  box-shadow: none;
+}
+.home-world .world-play-toolbar,
+.home-world .world-shortcuts,
+.home-world .world-walk-controls,
+.home-world .world-status[hidden] {
+  display: none;
+}
+.home-world[data-terrain-failed="true"] .world-shortcuts {
+  display: block;
+  top: 112px;
+}
+.home-world .world-status {
+  top: 8px;
+}
+@media (max-width: 760px) {
+  body:has(.home-world) .site-header {
+    inset: 12px 10px auto;
+    width: calc(100% - 20px);
+    height: 62px;
+    padding: 0 12px;
+  }
+  body:has(.home-world) .header-inner {
+    height: 62px;
+    min-height: 62px;
+  }
+  body:has(.home-world) .wordmark {
+    font-size: 18px;
+  }
+  body:has(.home-world) .account-trigger {
+    padding: 4px;
+  }
+  .home-world .world-frame {
+    inset: 88px 0 100px;
+  }
+  /* Touch movement stays available without the old dashboard footer. */
+  .home-world .world-walk-controls {
+    display: flex;
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 18px;
+    padding: 0;
+    align-items: center;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+  .home-world .world-walk-controls > div[role="status"] {
+    display: none;
+  }
+  .home-world .world-joystick {
+    pointer-events: auto;
+    width: 74px;
+    height: 74px;
+    background: #ffffff55;
+    border-color: #ffffff77;
+    backdrop-filter: blur(12px);
+    opacity: 0.8;
+  }
+  .dark .home-world .world-joystick {
+    background: #19243b88;
+    border-color: #ffffff33;
+  }
+  .home-world .world-interact {
+    display: none;
+    width: auto;
+    pointer-events: auto;
+  }
+  .home-world[data-near-door="true"] .world-interact {
+    display: flex;
+  }
+}

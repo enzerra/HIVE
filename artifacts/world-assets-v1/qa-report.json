@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "assetCount": 19,
+  "pngBytes": 5751274,
+  "webpBytes": 1112054,
+  "checks": [
+    "Unique manifest IDs and expected asset count",
+    "RGBA format and declared dimensions",
+    "Fully transparent canvas borders",
+    "Visible opaque foreground",
+    "PNG/WebP alpha equivalence",
+    "Identical Arena masks with distinct rendered states",
+    "Paired character canvas dimensions and distinct poses"
+  ],
+  "visualSheets": [
+    "qa-contact-light.png",
+    "qa-contact-dark.png",
+    "qa-contact-checker.png"
+  ],
+  "browserChecks": {
+    "desktop1280": true,
+    "mobile390": true,
+    "horizontalOverflow": false,
+    "arenaToggle": true,
+    "characterSelection": true,
+    "keyboardEnterSpace": true,
+    "backgroundModes": [
+      "dark",
+      "light",
+      "checker"
+    ]
+  }
+}

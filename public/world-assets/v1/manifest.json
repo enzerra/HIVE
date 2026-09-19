@@ -1,0 +1,471 @@
+{
+  "version": 1,
+  "stage": "static-asset-pack",
+  "generatedFrom": "approved-hive-concepts",
+  "coordinateSystem": "normalized top-left; anchor is placement reference",
+  "limitations": [
+    "Character assets contain two front-right poses, not a full walk cycle.",
+    "Doors, flags and lights remain baked into building illustrations.",
+    "Scene navigation and game collision geometry are not part of this pack."
+  ],
+  "arenaRegistration": [
+    [
+      1.0,
+      0.0,
+      -0.3798430562019348
+    ],
+    [
+      0.0,
+      1.0,
+      0.180038183927536
+    ]
+  ],
+  "assets": [
+    {
+      "id": "arena-idle",
+      "category": "building",
+      "src": "arena-idle.png",
+      "width": 768,
+      "height": 768,
+      "anchor": [
+        0.5,
+        0.94
+      ],
+      "bounds": [
+        34,
+        156,
+        734,
+        722
+      ],
+      "source": "arena-idle-concept.png",
+      "transparentPercent": 56.81,
+      "bytes": 565751,
+      "webp": "arena-idle.webp",
+      "webpBytes": 107752,
+      "stateGroup": "arena",
+      "animation": "state-crossfade"
+    },
+    {
+      "id": "arena-active",
+      "category": "building",
+      "src": "arena-active.png",
+      "width": 768,
+      "height": 768,
+      "anchor": [
+        0.5,
+        0.94
+      ],
+      "bounds": [
+        34,
+        156,
+        734,
+        722
+      ],
+      "source": "arena-active-v2.png",
+      "transparentPercent": 56.81,
+      "bytes": 545566,
+      "webp": "arena-active.webp",
+      "webpBytes": 100042,
+      "stateGroup": "arena",
+      "animation": "state-crossfade"
+    },
+    {
+      "id": "hive-tower",
+      "category": "building",
+      "src": "hive-tower.png",
+      "width": 768,
+      "height": 768,
+      "anchor": [
+        0.5,
+        0.94
+      ],
+      "bounds": [
+        200,
+        52,
+        569,
+        722
+      ],
+      "source": "hive-tower-concept.png",
+      "transparentPercent": 78.43,
+      "bytes": 316520,
+      "webp": "hive-tower.webp",
+      "webpBytes": 61312
+    },
+    {
+      "id": "squad-lounge",
+      "category": "building",
+      "src": "squad-lounge.png",
+      "width": 768,
+      "height": 768,
+      "anchor": [
+        0.5,
+        0.94
+      ],
+      "bounds": [
+        34,
+        139,
+        734,
+        722
+      ],
+      "source": "squad-lounge-concept.png",
+      "transparentPercent": 53.55,
+      "bytes": 671913,
+      "webp": "squad-lounge.webp",
+      "webpBytes": 131566
+    },
+    {
+      "id": "wolf-idle",
+      "category": "character",
+      "src": "wolf-idle.png",
+      "width": 384,
+      "height": 384,
+      "anchor": [
+        0.5,
+        0.94
+      ],
+      "bounds": [
+        94,
+        33,
+        291,
+        361
+      ],
+      "source": "wolf-poses-v2.png",
+      "transparentPercent": 73.72,
+      "bytes": 90634,
+      "webp": "wolf-idle.webp",
+      "webpBytes": 19922,
+      "species": "wolf",
+      "pose": "idle",
+      "direction": "front-right",
+      "animation": "two-pose-preview-only"
+    },
+    {
+      "id": "wolf-step",
+      "category": "character",
+      "src": "wolf-step.png",
+      "width": 384,
+      "height": 384,
+      "anchor": [
+        0.5,
+        0.94
+      ],
+      "bounds": [
+        86,
+        33,
+        299,
+        361
+      ],
+      "source": "wolf-poses-v2.png",
+      "transparentPercent": 73.87,
+      "bytes": 92185,
+      "webp": "wolf-step.webp",
+      "webpBytes": 20620,
+      "species": "wolf",
+      "pose": "step",
+      "direction": "front-right",
+      "animation": "two-pose-preview-only"
+    },
+    {
+      "id": "fox-idle",
+      "category": "character",
+      "src": "fox-idle.png",
+      "width": 384,
+      "height": 384,
+      "anchor": [
+        0.5,
+        0.94
+      ],
+      "bounds": [
+        91,
+        33,
+        293,
+        361
+      ],
+      "source": "fox-poses-concept.png",
+      "transparentPercent": 72.93,
+      "bytes": 94644,
+      "webp": "fox-idle.webp",
+      "webpBytes": 21584,
+      "species": "fox",
+      "pose": "idle",
+      "direction": "front-right",
+      "animation": "two-pose-preview-only"
+    },
+    {
+      "id": "fox-step",
+      "category": "character",
+      "src": "fox-step.png",
+      "width": 384,
+      "height": 384,
+      "anchor": [
+        0.5,
+        0.94
+      ],
+      "bounds": [
+        82,
+        33,
+        301,
+        361
+      ],
+      "source": "fox-poses-concept.png",
+      "transparentPercent": 73.02,
+      "bytes": 96552,
+      "webp": "fox-step.webp",
+      "webpBytes": 21834,
+      "species": "fox",
+      "pose": "step",
+      "direction": "front-right",
+      "animation": "two-pose-preview-only"
+    },
+    {
+      "id": "frog-idle",
+      "category": "character",
+      "src": "frog-idle.png",
+      "width": 384,
+      "height": 384,
+      "anchor": [
+        0.5,
+        0.94
+      ],
+      "bounds": [
+        102,
+        33,
+        281,
+        361
+      ],
+      "source": "frog-poses-concept.png",
+      "transparentPercent": 71.08,
+      "bytes": 95979,
+      "webp": "frog-idle.webp",
+      "webpBytes": 19812,
+      "species": "frog",
+      "pose": "idle",
+      "direction": "front-right",
+      "animation": "two-pose-preview-only"
+    },
+    {
+      "id": "frog-step",
+      "category": "character",
+      "src": "frog-step.png",
+      "width": 384,
+      "height": 384,
+      "anchor": [
+        0.5,
+        0.94
+      ],
+      "bounds": [
+        81,
+        33,
+        303,
+        361
+      ],
+      "source": "frog-poses-concept.png",
+      "transparentPercent": 70.61,
+      "bytes": 100602,
+      "webp": "frog-step.webp",
+      "webpBytes": 21048,
+      "species": "frog",
+      "pose": "step",
+      "direction": "front-right",
+      "animation": "two-pose-preview-only"
+    },
+    {
+      "id": "lamp",
+      "category": "prop",
+      "src": "lamp.png",
+      "width": 512,
+      "height": 512,
+      "anchor": [
+        0.5,
+        0.94
+      ],
+      "bounds": [
+        194,
+        41,
+        319,
+        481
+      ],
+      "source": "props-concept.png",
+      "transparentPercent": 87.62,
+      "bytes": 82302,
+      "webp": "lamp.webp",
+      "webpBytes": 15180
+    },
+    {
+      "id": "banner",
+      "category": "prop",
+      "src": "banner.png",
+      "width": 512,
+      "height": 512,
+      "anchor": [
+        0.5,
+        0.94
+      ],
+      "bounds": [
+        152,
+        41,
+        359,
+        481
+      ],
+      "source": "props-concept.png",
+      "transparentPercent": 82.78,
+      "bytes": 94618,
+      "webp": "banner.webp",
+      "webpBytes": 18228
+    },
+    {
+      "id": "crystal",
+      "category": "prop",
+      "src": "crystal.png",
+      "width": 512,
+      "height": 512,
+      "anchor": [
+        0.5,
+        0.94
+      ],
+      "bounds": [
+        156,
+        41,
+        357,
+        481
+      ],
+      "source": "props-concept.png",
+      "transparentPercent": 79.18,
+      "bytes": 125039,
+      "webp": "crystal.webp",
+      "webpBytes": 23226
+    },
+    {
+      "id": "bench",
+      "category": "prop",
+      "src": "bench.png",
+      "width": 512,
+      "height": 512,
+      "anchor": [
+        0.5,
+        0.94
+      ],
+      "bounds": [
+        36,
+        93,
+        476,
+        481
+      ],
+      "source": "props-concept.png",
+      "transparentPercent": 70.23,
+      "bytes": 159883,
+      "webp": "bench.webp",
+      "webpBytes": 27040
+    },
+    {
+      "id": "tree",
+      "category": "prop",
+      "src": "tree.png",
+      "width": 512,
+      "height": 512,
+      "anchor": [
+        0.5,
+        0.94
+      ],
+      "bounds": [
+        114,
+        41,
+        397,
+        481
+      ],
+      "source": "props-concept.png",
+      "transparentPercent": 69.84,
+      "bytes": 192838,
+      "webp": "tree.webp",
+      "webpBytes": 40428
+    },
+    {
+      "id": "pulse-terminal",
+      "category": "prop",
+      "src": "pulse-terminal.png",
+      "width": 512,
+      "height": 512,
+      "anchor": [
+        0.5,
+        0.94
+      ],
+      "bounds": [
+        147,
+        41,
+        365,
+        481
+      ],
+      "source": "props-concept.png",
+      "transparentPercent": 75.58,
+      "bytes": 138309,
+      "webp": "pulse-terminal.webp",
+      "webpBytes": 23032
+    },
+    {
+      "id": "replay-terminal",
+      "category": "prop",
+      "src": "replay-terminal.png",
+      "width": 512,
+      "height": 512,
+      "anchor": [
+        0.5,
+        0.94
+      ],
+      "bounds": [
+        148,
+        41,
+        365,
+        481
+      ],
+      "source": "props-concept.png",
+      "transparentPercent": 75.87,
+      "bytes": 139974,
+      "webp": "replay-terminal.webp",
+      "webpBytes": 23234
+    },
+    {
+      "id": "bridge",
+      "category": "prop",
+      "src": "bridge.png",
+      "width": 512,
+      "height": 512,
+      "anchor": [
+        0.5,
+        0.94
+      ],
+      "bounds": [
+        36,
+        142,
+        476,
+        481
+      ],
+      "source": "props-concept.png",
+      "transparentPercent": 68.87,
+      "bytes": 184684,
+      "webp": "bridge.webp",
+      "webpBytes": 31186
+    },
+    {
+      "id": "plaza",
+      "category": "terrain",
+      "src": "plaza.png",
+      "width": 1536,
+      "height": 1024,
+      "anchor": [
+        0.5,
+        0.94
+      ],
+      "bounds": [
+        38,
+        37,
+        1498,
+        963
+      ],
+      "source": "plaza-terrain-concept.png",
+      "transparentPercent": 49.98,
+      "bytes": 1963281,
+      "webp": "plaza.webp",
+      "webpBytes": 385008
+    }
+  ]
+}

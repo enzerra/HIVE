@@ -1,0 +1,279 @@
+.arena-district {
+  position: relative;
+  isolation: isolate;
+  min-height: calc(100svh - 48px);
+  overflow: hidden;
+  background: radial-gradient(
+    ellipse at 50% 55%,
+    #333c5d,
+    #141c2d 65%,
+    #101622
+  );
+  color: #f1f3ff;
+  border: 1px solid #ffffff24;
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.district-hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  font-size: 12px;
+}
+.district-hud > div {
+  display: flex;
+  gap: 8px;
+}
+.district-hud a,
+.district-footer a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #ffffff29;
+  border-radius: 10px;
+  background: #101624b0;
+}
+.district-hud > span {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: #c5c9dc;
+}
+.district-heading {
+  text-align: center;
+  margin: 24px 0 20px;
+}
+.district-heading p {
+  color: #b1a9ff;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+}
+.district-heading h1 {
+  font-size: clamp(28px, 4vw, 48px);
+  line-height: 1.1;
+  letter-spacing: -0.045em;
+  margin: 12px 0;
+}
+.district-heading > span {
+  font-size: 13px;
+  color: #c5c9dc;
+}
+.district-rivals {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.district-rivals > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.district-rivals strong {
+  font-size: 14px;
+}
+.district-vs {
+  font-size: 11px;
+  color: #bcb6ed;
+  margin-right: 8px;
+}
+.district-stage {
+  position: relative;
+  width: min(100%, 660px);
+  aspect-ratio: 1/1;
+  margin-top: -24px;
+}
+.district-building {
+  position: absolute;
+  inset: 0;
+  transition: transform 0.65s cubic-bezier(0.22, 0.7, 0.2, 1);
+  transform-origin: 50% 82%;
+  pointer-events: none;
+}
+.district-building img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.district-active {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.district-active[data-open="true"] {
+  opacity: 1;
+}
+.arena-district[data-entering="true"] .district-building {
+  transform: scale(1.35);
+}
+.district-halo {
+  position: absolute;
+  inset: 30% 10% 10%;
+  background: radial-gradient(ellipse, #7166cc28, transparent 70%);
+  pointer-events: none;
+}
+.district-gate {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: inherit;
+}
+.district-door-hit {
+  position: absolute;
+  left: 40%;
+  top: 63%;
+  width: 20%;
+  height: 26%;
+  min-width: 44px;
+  min-height: 44px;
+  pointer-events: auto;
+  border-radius: 30% 30% 10% 10%;
+  transition:
+    box-shadow 0.18s,
+    background 0.18s;
+}
+.district-gate:hover .district-door-hit,
+.district-gate:focus-visible .district-door-hit {
+  box-shadow: 0 0 28px #b3a2ff88;
+  background: #b3a2ff12;
+}
+.district-gate:focus-visible .district-door-hit {
+  outline: 3px solid #efeaff;
+  outline-offset: 5px;
+}
+.district-gate:active .district-door-hit {
+  background: #b3a2ff44;
+}
+.district-gate-label {
+  position: absolute;
+  top: 92%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  gap: 6px;
+  text-align: center;
+  padding: 12px 20px;
+  background: #101525ed;
+  border: 1px solid #a598ff75;
+  border-radius: 13px;
+  pointer-events: auto;
+  white-space: nowrap;
+}
+.district-gate-label small {
+  color: #b9afff;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+}
+.district-gate-label strong {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 14px;
+}
+.district-status {
+  position: absolute;
+  left: 50%;
+  top: 85%;
+  transform: translate(-50%, -50%);
+  width: max-content;
+  max-width: 94%;
+  padding: 16px;
+  background: #101525ed;
+  border: 1px solid #ffffff35;
+  border-radius: 14px;
+  text-align: center;
+  font-size: 13px;
+}
+.district-status button {
+  min-height: 44px;
+  color: #c5baff;
+  text-decoration: underline;
+}
+.district-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  width: 100%;
+  margin-top: 76px;
+  color: #c5c9dc;
+  font-size: 11px;
+}
+.district-progress {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #111b2b;
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+body:has(.arena-district) .site-header,
+body:has(.arena-district) .site-footer,
+body:has(.arena-district) .pulse-companion,
+body:has(.arena-district) .mobile-bottom-space {
+  display: none;
+}
+body:has(.arena-district) .page-container {
+  max-width: none;
+  width: 100%;
+  padding: 24px;
+  margin: 0;
+}
+.arena-district a:focus-visible,
+.arena-district button:focus-visible {
+  outline: 3px solid #d4caff;
+  outline-offset: 4px;
+}
+.arena-district .district-gate:focus-visible {
+  outline: none;
+}
+.arena-district[data-reduced="true"] .district-building,
+.arena-district[data-reduced="true"] .district-active,
+.arena-district[data-reduced="true"] .district-door-hit {
+  transition: none;
+}
+@media (max-width: 620px) {
+  body:has(.arena-district) .page-container {
+    padding: 8px;
+  }
+  .arena-district {
+    padding: 16px;
+    min-height: calc(100svh - 16px);
+    border-radius: 16px;
+  }
+  .district-hud > span {
+    display: none;
+  }
+  .district-heading {
+    margin-top: 28px;
+  }
+  .district-heading > span {
+    font-size: 12px;
+  }
+  .district-stage {
+    margin-top: 0;
+  }
+  .district-footer {
+    margin-top: 72px;
+  }
+  .district-footer > span {
+    width: 100%;
+    text-align: center;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .district-building,
+  .district-active,
+  .district-door-hit {
+    transition: none;
+  }
+}

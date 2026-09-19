@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import { RoundTransition } from "@/components/round-transition";
+import { ArenaDistrict } from "@/components/arena-district";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -71,12 +72,26 @@ export function useMatch() {
   });
 }
 export function ArenaIndex() {
+  const districtMatch = useMatch();
+  return (
+    <AuthGate>
+      <ArenaDistrict
+        match={districtMatch.data}
+        pending={districtMatch.isPending}
+        error={districtMatch.error}
+        retry={() => districtMatch.refetch()}
+      />
+    </AuthGate>
+  );
+}
+export function ArenaDirectory() {
   const { data: v } = useSession(),
     q = useMatch(),
     [tab, setTab] = useState("upcoming");
   return (
     <AuthGate>
       <PageTitle
+        scene="arena"
         eyebrow="BRING YOUR PERSPECTIVE"
         title="Bersama, masuk Arena."
         description="Dua Hive. Sepuluh Squad. Satu pertanyaan yang layak dipikirkan."

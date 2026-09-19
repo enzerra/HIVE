@@ -138,6 +138,20 @@ export type Notification = {
   read: boolean;
 };
 
+export type WorldLocationStatus =
+  "idle" | "active" | "live" | "attention" | "locked";
+
+export type WorldLocation = {
+  id: "arena" | "squad" | "hive" | "pulse" | "replay" | "wisdom";
+  destination: string;
+  label: string;
+  description: string;
+  action: string;
+  status: WorldLocationStatus;
+  activityCount: number | null;
+  visualState: string;
+};
+
 export type OpenCallStage =
   "open" | "discussing" | "resolving" | "resolved" | "void";
 export type OpenCall = {

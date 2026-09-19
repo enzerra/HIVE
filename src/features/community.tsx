@@ -9,7 +9,6 @@ import {
   Check,
   Clock,
   Search,
-  Plus,
   Copy,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -31,7 +30,7 @@ import { api, post } from "@/lib/client/api";
 import { hives, squads, hiveById, squadById } from "@/domain/community";
 import type { Hive } from "@/domain/types";
 import type { OpenCall } from "@/domain/types";
-import { CallCard } from "@/features/calls";
+import { HomeWorld } from "@/components/home-world";
 
 function Activity() {
   return (
@@ -86,90 +85,6 @@ function Activity() {
     </>
   );
 }
-function SquadAside() {
-  const { data: v } = useSession();
-  const squad = squadById(v?.squadId ?? "");
-  return (
-    <aside className="social-aside">
-      <section>
-        <div className="section-title">
-          <h3>Squad-mu</h3>
-          {squad && <Crest symbol={squad.symbol} size={28} />}
-        </div>
-        {squad ? (
-          <>
-            <Link href={`/squads/${squad.id}`}>
-              <h2 className="mb-5 text-xl">
-                {squad.name}{" "}
-                <span className="muted text-xs font-normal">
-                  / {hiveById(squad.hiveId)?.name}
-                </span>
-              </h2>
-            </Link>
-            {squad.members.map((name, i) => (
-              <div key={name} className="member-row">
-                <Avatar index={i} size={32} />
-                <div>
-                  <strong>
-                    {i === 0 && squad.id === "aster" ? v?.handle : name}
-                    {i === 0 && squad.id === "aster" ? " · kamu" : ""}
-                  </strong>
-                  <small>{i === 1 ? "Representative" : "Human"}</small>
-                </div>
-              </div>
-            ))}
-            <Link
-              className="text-link aside-action"
-              href={`/squads/${squad.id}`}
-            >
-              Buka ruang Squad
-              <ArrowRight size={14} />
-            </Link>
-          </>
-        ) : (
-          <>
-            <p className="aside-copy">
-              Temukan 3–5 orang yang membuat diskusi terasa berbeda.
-            </p>
-            <Button variant="outline" className="aside-action" asChild>
-              <Link href="/onboarding/squad">
-                <Plus size={15} />
-                Temukan Squad
-              </Link>
-            </Button>
-          </>
-        )}
-      </section>
-      <section>
-        <h3>Untuk percakapan yang lebih baik.</h3>
-        <p className="aside-copy">
-          Kritik alasannya, hargai orangnya. Mengubah pikiran setelah mendengar
-          bukti baru adalah bagian dari permainan.
-        </p>
-        <Link
-          className="text-link aside-action subtle"
-          href="/hives/purple?tab=about"
-        >
-          Budaya komunitas
-          <ArrowUpRight size={13} />
-        </Link>
-      </section>
-      <section>
-        <h3>Temukan frekuensi lain</h3>
-        {hives.slice(1, 3).map((h) => (
-          <Link className="member-row" key={h.id} href={`/hives/${h.slug}`}>
-            <Sigil symbol={h.symbol} color={h.color} size={35} />
-            <div>
-              <strong>{h.name}</strong>
-              <small>{h.category}</small>
-            </div>
-            <ArrowUpRight className="ml-auto muted" size={13} />
-          </Link>
-        ))}
-      </section>
-    </aside>
-  );
-}
 export function HomePage() {
   const { data: v } = useSession();
   const home = useQuery({
@@ -189,109 +104,19 @@ export function HomePage() {
   });
   return (
     <AuthGate>
-      <PageTitle
-        eyebrow="YOUR PEOPLE. YOUR PERSPECTIVE."
-        title={`Senang kamu di sini, ${v?.handle ?? ""}.`}
-        description="Ada percakapan yang menunggumu. Ada perspektif yang bisa kamu bawa."
-        action={
-          <Button variant="outline" asChild>
-            <Link href="/explore">
-              Jelajahi Hives <ArrowUpRight size={15} />
-            </Link>
-          </Button>
-        }
-      />
-      <div className="social-layout">
-        <div className="social-main">
-          {v?.onboarded && calls.data?.[0] && (
-            <section className="mb-8">
-              <div className="section-title">
-                <div>
-                  <p className="eyebrow">QUICK PULSE · ANYTIME</p>
-                  <h2>Satu pertanyaan untuk hari ini.</h2>
-                </div>
-                <Link className="text-link subtle" href="/calls">
-                  Buka Pulse <ArrowRight size={13} />
-                </Link>
-              </div>
-              <CallCard call={calls.data[0]} />
-            </section>
-          )}
-          {v?.squadId && (
-            <Link
-              className="mobile-squad-summary"
-              href={`/squads/${v.squadId}`}
-            >
-              <AvatarGroup count={v.squadId === "aster" ? 4 : 2} size={27} />
-              <span>
-                <strong>
-                  {squadById(v.squadId)?.name ?? v.squadName ?? "Squad-mu"}
-                </strong>
-                <small>Orang-orangmu ada di sini.</small>
-              </span>
-              <ArrowRight size={15} />
-            </Link>
-          )}
-          {!v?.onboarded ? (
-            <Empty
-              title="Buat ruang ini jadi milikmu."
-              description="Lengkapi identitas dan pilih Squad, atau jelajahi komunitas lebih dulu."
-              href="/onboarding/identity"
-              label="Lanjutkan perkenalan"
-            />
-          ) : v.deferred || v.squadId !== "aster" ? (
-            <div className="panel mb-8">
-              <p className="eyebrow mb-4">YOUR NEXT CHAPTER</p>
-              <h2>Semua berawal dari satu Squad.</h2>
-              <p className="muted text-sm my-4">
-                Kenali anggota komunitas, lalu temukan lingkaran untuk Arena
-                pertamamu.
-              </p>
-              <Button asChild>
-                <Link href="/onboarding/squad">
-                  Temukan Squad <ArrowRight size={15} />
-                </Link>
-              </Button>
-            </div>
-          ) : home.data?.started ? (
-            <div className="panel mb-8">
-              <p className="eyebrow mb-4">ARENA DEMO-MU</p>
-              <h2>
-                {home.data.settled
-                  ? "Ada cerita untuk dibawa pulang."
-                  : home.data.finishedPlaying
-                    ? "Pilihan selesai. Outcome menyusul."
-                    : "Pertandinganmu sedang berlangsung."}
-              </h2>
-              <p className="muted text-sm my-4">
-                {home.data.settled
-                  ? "Hasil sudah sah. Lihat apa yang tumbuh dari percakapan kalian."
-                  : "Kembali ke status terbaru bersama Squad Aster."}
-              </p>
-              <Button asChild>
-                <Link
-                  href={
-                    home.data.settled
-                      ? "/arena/founding-001/results"
-                      : "/arena/founding-001/play"
-                  }
-                >
-                  {home.data.settled
-                    ? "Lihat hasil pertandingan"
-                    : "Kembali ke Arena"}{" "}
-                  <ArrowRight size={15} />
-                </Link>
-              </Button>
-            </div>
-          ) : (
-            <ArenaCard />
-          )}
-          <SectionTitle title="Di lingkaranmu" />
-          <Activity />
-          <DemoNote />
-        </div>
-        <SquadAside />
-      </div>
+      {v && (
+        <HomeWorld
+          viewer={v}
+          match={home.data ?? null}
+          call={calls.data?.[0] ?? null}
+          loading={home.isPending || (v.onboarded && calls.isPending)}
+          degraded={!!home.error || !!calls.error}
+          retry={() => {
+            void home.refetch();
+            if (v.onboarded) void calls.refetch();
+          }}
+        />
+      )}
     </AuthGate>
   );
 }
@@ -320,6 +145,7 @@ export function ExplorePage() {
   return (
     <>
       <PageTitle
+        scene="hive"
         eyebrow="FIND YOUR FREQUENCY"
         title="Orang yang tepat. Perspektif baru."
         description="Cari komunitas yang terasa seperti tempatmu. Tidak harus berpikir sama."
@@ -406,7 +232,7 @@ export function HivePage({ slug }: { slug: string }) {
     following = home.data?.following?.includes(h.id);
   return (
     <>
-      <div className="profile-banner" />
+      <div className="profile-banner world-profile-banner world-hive-banner" />
       <div className="profile-header">
         <Sigil symbol={h.symbol} color={h.color} size={80} />
         <div>
@@ -636,6 +462,7 @@ export function SquadPage({ id }: { id: string }) {
     own = v?.squadId === id;
   return (
     <>
+      <div className="profile-banner world-profile-banner world-squad-banner" />
       <div className="profile-header">
         <Crest symbol={squad.symbol} size={74} />
         <div>
@@ -855,6 +682,7 @@ export function RankingsPage() {
   return (
     <>
       <PageTitle
+        scene="wisdom"
         eyebrow="EARNED THROUGH PERSPECTIVE"
         title="Yang tumbuh bersama."
         description="Kompetisi memberi arah. Reputasi dibangun dari keputusan yang dapat dipertanggungjawabkan."

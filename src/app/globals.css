@@ -3153,6 +3153,140 @@ strong {
   }
 }
 
+/* A compact window into HIVE World keeps destination pages grounded in place. */
+.page-title.world-scene {
+  position: relative;
+  isolation: isolate;
+  min-height: 240px;
+  overflow: hidden;
+  align-items: flex-end;
+  padding: 42px;
+  border: 1px solid #ffffff1f;
+  border-radius: 24px;
+  color: #f7f8fc;
+  background: #111725;
+  box-shadow: 0 24px 70px #191e361c;
+}
+
+.world-scene-art {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image: url("/images/hive-world-island.png");
+  background-repeat: no-repeat;
+  background-size: 165%;
+  filter: saturate(0.76) contrast(1.04) brightness(0.62);
+  transform: scale(1.02);
+  transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.world-scene:hover .world-scene-art {
+  transform: scale(1.045);
+}
+
+.world-scene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, #090d18de 0%, #0c1120b8 48%, #0c112044 100%),
+    linear-gradient(0deg, #080c17b8, transparent 62%);
+}
+
+.world-scene-arena .world-scene-art {
+  background-position: 4% 28%;
+}
+.world-scene-squad .world-scene-art {
+  background-position: 8% 76%;
+}
+.world-scene-hive .world-scene-art {
+  background-position: 47% 22%;
+}
+.world-scene-pulse .world-scene-art {
+  background-position: 48% 83%;
+}
+.world-scene-replay .world-scene-art {
+  background-position: 91% 69%;
+}
+.world-scene-wisdom .world-scene-art {
+  background-position: 94% 23%;
+}
+
+.world-scene .eyebrow,
+.world-scene .muted {
+  color: #d7d9e5;
+}
+
+.world-scene > div {
+  max-width: 670px;
+}
+
+.world-scene h1 {
+  max-width: 760px;
+  font-size: clamp(2.35rem, 5vw, 4.75rem);
+}
+
+.world-scene > a,
+.world-scene > button {
+  color: #f7f8fc;
+  border-color: #ffffff33;
+  background: #11182780;
+  backdrop-filter: blur(14px);
+}
+
+.profile-banner.world-profile-banner {
+  height: 210px;
+  border: 1px solid #ffffff1f;
+  border-radius: 24px;
+  background-image:
+    linear-gradient(0deg, #090d19ad, transparent 68%),
+    url("/images/hive-world-island.png");
+  background-repeat: no-repeat;
+  background-size: 150%;
+  filter: saturate(0.8) contrast(1.02) brightness(0.8);
+  box-shadow: 0 22px 65px #171d3417;
+}
+
+.profile-banner.world-profile-banner::before,
+.profile-banner.world-profile-banner::after {
+  display: none;
+}
+
+.world-hive-banner {
+  background-position: 48% 25%;
+}
+
+.world-squad-banner {
+  background-position: 3% 75%;
+}
+
+@media (max-width: 620px) {
+  .page-title.world-scene {
+    min-height: 260px;
+    padding: 28px 22px;
+    border-radius: 18px;
+  }
+  .world-scene-art {
+    background-size: auto 125%;
+  }
+  .world-scene h1 {
+    font-size: clamp(2.1rem, 12vw, 3.5rem);
+  }
+  .profile-banner.world-profile-banner {
+    height: 150px;
+    border-radius: 18px;
+    background-size: auto 155%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .world-scene-art {
+    transition: none;
+  }
+}
+
 /* A plaster-like canvas: neutral grain and architectural grid, behind content. */
 body {
   background-image:

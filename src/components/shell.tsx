@@ -84,17 +84,24 @@ export function Header() {
           <Mark />
           hive<span className="wordmark-dot">.</span>
         </Link>
-        <nav className="desktop-nav" aria-label="Navigasi utama">
-          {links.map(([href, label]) => (
-            <Link
-              key={href}
-              href={href}
-              aria-current={path === href ? "page" : undefined}
-            >
-              {label}
-            </Link>
-          ))}
-        </nav>
+        {path === "/home" && viewer ? (
+          <div className="world-header-welcome">
+            <strong>Selamat datang, {viewer.handle}.</strong>
+            <span>Duniamu. Squad-mu. Perspektif baru.</span>
+          </div>
+        ) : (
+          <nav className="desktop-nav" aria-label="Navigasi utama">
+            {links.map(([href, label]) => (
+              <Link
+                key={href}
+                href={href}
+                aria-current={path === href ? "page" : undefined}
+              >
+                {label}
+              </Link>
+            ))}
+          </nav>
+        )}
         <div className="header-actions">
           <span className="season-label">
             FOUNDING SEASON <span>DEMO</span>
@@ -282,7 +289,8 @@ function PulseCompanion() {
     const timer = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(timer);
   }, []);
-  if (!viewer?.onboarded || path.startsWith("/calls")) return null;
+  if (!viewer?.onboarded || path === "/home" || path.startsWith("/calls"))
+    return null;
   const call = calls.data?.[0];
   const remaining = countdown(call?.closesAt ?? null, now);
   const resolved = call?.stage === "resolved";
