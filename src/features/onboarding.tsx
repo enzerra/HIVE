@@ -30,6 +30,10 @@ export function SignInPage() {
     qc = useQueryClient(),
     { data: v } = useSession();
   const target = safeReturn(params.get("returnTo"));
+  const googleConfigured = Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  );
 
   async function signInWithGoogle() {
     setBusy(true);
@@ -101,7 +105,7 @@ export function SignInPage() {
           <>
             <Button
               variant="outline"
-              disabled={busy}
+              disabled={busy || !googleConfigured}
               onClick={signInWithGoogle}
               type="button"
             >
@@ -118,6 +122,11 @@ export function SignInPage() {
               </svg>
               Lanjutkan dengan Google
             </Button>
+            {!googleConfigured && (
+              <p className="form-note">
+                Login Google tersedia setelah Supabase dikonfigurasi.
+              </p>
+            )}
             <div className="auth-divider">ATAU COBA MODE DEMO</div>
             <Button disabled={busy} onClick={enter}>
               {busy ? "Menyiapkan ruangmu…" : "Coba alur masuk (demo)"}
@@ -131,8 +140,8 @@ export function SignInPage() {
           </p>
         )}
         <p className="form-note">
-          Demo menggunakan identitas ilustratif dan sesi sementara. Tidak ada
-          login Google, taruhan, atau transaksi uang.
+          Mode demo menggunakan identitas ilustratif dan sesi sementara. Tidak
+          ada taruhan atau transaksi uang.
         </p>
         <Link href="/explore" className="text-link mt-6 subtle">
           Jelajahi tanpa akun <ArrowUpRightSmall />
