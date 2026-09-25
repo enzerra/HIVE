@@ -28,6 +28,7 @@ import {
   reviseQuickCall,
   voidQuickCall,
 } from "@/lib/server/quick-calls";
+import { createClient as createSupabaseServerClient } from "@/lib/supabase/server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 const cookieName = "hive_demo_session";
@@ -44,8 +45,37 @@ type Context = { params: Promise<{ route: string[] }> };
 async function handle(req: NextRequest, context: Context) {
   try {
     const path = (await context.params).route.join("/"),
-      method = req.method,
-      id = req.cookies.get(cookieName)?.value;
+      method = req.method;
+    let id = req.cookies.get(cookieName)?.value;
+
+    let supabaseUser: { id: string; email?: string } | null = null;
+    try {
+      const supabase = await createSupabaseServerClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        supabaseUser = user;
+        id = user.id;
+        let w = getWorld(user.id);
+        if (!w) {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", user.id)
+            .single();
+
+          const handle = profile?.handle ?? user.email?.split("@")[0] ?? "Player";
+          w = createWorld(user.id, {
+            handle,
+            avatar: 0,
+            hiveId: profile?.hive_id ?? null,
+            squadId: profile?.squad_id ?? null,
+            onboarded: profile?.onboarded ?? false,
+          });
+        }
+      }
+    } catch {
+      // Supabase not authenticated or error, continue with demo session
+    }
     if (process.env.HIVE_DATA_MODE === "live")
       throw new AppError(
         "LIVE_NOT_CONFIGURED",
@@ -167,6 +197,10 @@ async function handle(req: NextRequest, context: Context) {
     }
     if (path === "auth/logout") {
       if (id) worlds.delete(id);
+      try {
+        const supabase = await createSupabaseServerClient();
+        await supabase.auth.signOut();
+      } catch {}
       const response = success(null);
       response.cookies.delete(cookieName);
       return response;
@@ -235,6 +269,22 @@ async function handle(req: NextRequest, context: Context) {
       if (!w.viewer.onboarded && (w.onboardingStep ?? 0) < 3)
         throw new AppError("STEP_REQUIRED", 409);
       w.viewer.onboarded = true;
+      if (supabaseUser) {
+        try {
+          const supabase = await createSupabaseServerClient();
+          await supabase
+            .from("profiles")
+            .update({
+              handle: w.viewer.handle,
+              avatar_url: `/avatars/a-${w.viewer.avatar + 1}.svg`,
+              hive_id: w.viewer.hiveId,
+              squad_id: w.viewer.squadId,
+              onboarded: true,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("id", supabaseUser.id);
+        } catch {}
+      }
       return success(w.viewer);
     }
     if (path === "matches/current/readiness") {

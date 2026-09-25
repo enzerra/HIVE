@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Check, MoveUpRight } from "lucide-react";
 import { Header, Footer } from "./shell";

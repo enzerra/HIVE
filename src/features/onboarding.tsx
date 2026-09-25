@@ -20,6 +20,8 @@ import { api, post } from "@/lib/client/api";
 import { safeReturn } from "@/domain/rules";
 import { hives, hiveById, squadById } from "@/domain/community";
 import type { Viewer, Squad } from "@/domain/types";
+import { createClient } from "@/lib/supabase/client";
+
 export function SignInPage() {
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
@@ -28,6 +30,29 @@ export function SignInPage() {
     qc = useQueryClient(),
     { data: v } = useSession();
   const target = safeReturn(params.get("returnTo"));
+
+  async function signInWithGoogle() {
+    setBusy(true);
+    setError("");
+    try {
+      const supabase = createClient();
+      const origin = window.location.origin;
+      const { error: authError } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(target)}`,
+        },
+      });
+      if (authError) {
+        setError(authError.message);
+        setBusy(false);
+      }
+    } catch (err) {
+      setError((err as Error).message);
+      setBusy(false);
+    }
+  }
+
   async function enter() {
     setBusy(true);
     setError("");
@@ -74,7 +99,12 @@ export function SignInPage() {
           </Button>
         ) : (
           <>
-            <Button variant="outline" disabled>
+            <Button
+              variant="outline"
+              disabled={busy}
+              onClick={signInWithGoogle}
+              type="button"
+            >
               <svg
                 viewBox="0 0 24 24"
                 width="16"
@@ -88,10 +118,7 @@ export function SignInPage() {
               </svg>
               Lanjutkan dengan Google
             </Button>
-            <p className="form-note">
-              Google Auth tersedia setelah integrasi live dikonfigurasi.
-            </p>
-            <div className="auth-divider">JELAJAHI PENGALAMANNYA</div>
+            <div className="auth-divider">ATAU COBA MODE DEMO</div>
             <Button disabled={busy} onClick={enter}>
               {busy ? "Menyiapkan ruangmu…" : "Coba alur masuk (demo)"}
               <ArrowRight size={15} />

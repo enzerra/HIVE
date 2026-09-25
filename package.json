@@ -17,6 +17,8 @@
   },
   "dependencies": {
     "@base-ui/react": "1.8.0",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.109.0",
     "@tanstack/react-query": "5.102.8",
     "class-variance-authority": "0.7.1",
     "cn": "0.2.6",
@@ -32,6 +34,7 @@
     "zod": "4.5.4"
   },
   "devDependencies": {
+    "@rolldown/binding-win32-x64-msvc": "^1.2.8",
     "@tailwindcss/postcss": "4.3.3",
     "@types/node": "22.20.1",
     "@types/react": "19.2.18",

@@ -71,24 +71,25 @@ const argumentText = [
   "Basis awal yang lebih kecil bisa membuat pertumbuhan relatif B lebih besar.",
   "Kami masih terbagi. Kedua game memiliki sinyal menarik, tetapi bukti saat ini belum cukup kuat.",
 ];
-export function createWorld() {
-  const id = randomUUID();
+export function createWorld(customId?: string, initialViewer?: Partial<Viewer>) {
+  const id = customId ?? randomUUID();
   const w: World = {
     viewer: {
       id,
-      handle: "Nara",
-      avatar: 0,
-      squadId: null,
-      hiveId: null,
-      onboarded: false,
-      deferred: false,
-      role: "member",
+      handle: initialViewer?.handle ?? "Nara",
+      avatar: initialViewer?.avatar ?? 0,
+      squadId: initialViewer?.squadId ?? null,
+      hiveId: initialViewer?.hiveId ?? null,
+      onboarded: initialViewer?.onboarded ?? false,
+      deferred: initialViewer?.deferred ?? false,
+      role: initialViewer?.role ?? "member",
       preferences: {
         theme: "system",
         motion: "system",
         sound: false,
         presence: true,
         reminders: true,
+        ...initialViewer?.preferences,
       },
     },
     startedAt: null,
